@@ -115,9 +115,10 @@
 
     & .validations {
       display: flex;
+      align-items: start;
       flex-direction: column;
       gap: 10px;
-      width: 90%;
+      width: 100%;
 
       & p {
         font-size: 20px;
