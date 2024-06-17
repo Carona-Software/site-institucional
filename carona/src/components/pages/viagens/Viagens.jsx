@@ -5,6 +5,7 @@ import CardProximaViagem from './card_proxima_viagem/CardProximaViagem';
 import CardViagemFeita from './card_viagem_feita/CardViagemFeita';
 import notFound from '../../../utils/assets/image-not-found-viagem.svg';
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function Viagens() {
     const [viagensPendentes, setViagensPendentes] = useState([]);
@@ -38,7 +39,16 @@ function Viagens() {
     };
 
     const handleCancelarViagem = (id) => {
-        // Implemente a lógica para cancelar a viagem com o ID fornecido
+      console.log("cancelando a viagem " + id)
+      alert("Viagem cancelada com sucesso!")
+      if(sessionStorage.tipoUsuario === "MOTORISTA"){
+        axios.put(`http://localhost:8080/viagem/cancelar-viagem-motorista/${id}`)
+        toast.success("Viagem cancelada com sucesso!")
+      }
+      else{
+        axios.put(`http://localhost:8080/viagem/cancelar-viagem-passageiro/${id}`)
+        toast.success("Viagem cancelada com sucesso!")
+      }
     };
 
     return (

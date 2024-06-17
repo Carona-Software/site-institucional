@@ -18,9 +18,15 @@ function Sidebar({ currentPageName }) {
   // const tipoUser = localStorage.getItem('tipoUser');
   // const nomeUser = localStorage.getItem('nomeUser');
   // const notaUser = localStorage.getItem('notaUser');
-  const tipoUser = 'PASSAGEIRO';
-  const nomeUser = 'Gustavo';
-  const notaUser = '4.7';
+// Supondo que o JSON está armazenado no sessionStorage com a chave 'userProfileData'
+const userProfileData = JSON.parse(sessionStorage.getItem('userProfileData'));
+
+// Extraia os campos desejados
+const nomeUser = userProfileData.nome;
+const notaUser = '4.7';
+const tipoUser = userProfileData.tipoUsuario === 'MOTORISTA' ? 'PASSAGEIRO' : userProfileData.tipoUsuario;
+
+console.log(`Nome: ${nomeUser}, Nota: ${notaUser}, Tipo: ${tipoUser}`);
 
   const { idUser } = useParams()
 

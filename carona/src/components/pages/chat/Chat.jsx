@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Message from "./mensagens/Message";
+import axios from "axios";
 import styles from "./Chat.module.css";
-import { FaArrowUp } from "react-icons/fa6";
+import { FaArrowUp } from "react-icons/fa";
 
 const Chat = ({ selectedContact }) => {
   const [messages, setMessages] = useState([]);
@@ -9,28 +9,66 @@ const Chat = ({ selectedContact }) => {
   const imageUrl = `https://res.cloudinary.com/dkzjrifqn/image/upload/k3xzen0rgeoq9v05lhcb`;
 
   useEffect(() => {
-    if (selectedContact) {
-      const defaultMessages = [
-        { content: "Bom dia! Tudo bem?", isSentByCurrentUser: false },
-        {
-          content: "Olá, bom dia! Tudo bem e você?",
-          isSentByCurrentUser: true,
-        },
-      ];
-      setMessages(defaultMessages);
-    } else {
-      setMessages([]);
+    if (selectedContact && selectedContact.id) { 
+      console.log("Salada com cebola")
+      console.log("o id que chega do motorista é " + selectedContact.id)
+      const interval = setInterval(() => {
+        fetchMessages(selectedContact.id);
+      }, 2000);
+  
+      return () => clearInterval(interval);
     }
   }, [selectedContact]);
+  
+  const fetchMessages = async (contactId) => {
+    const usuarioId = sessionStorage.idUsuario;
+    console.log("Salada com cebola")
+    try {
+      let response = "";
+      let tipoUsuario = sessionStorage.tipoUsuario.replace(/"/g, '');
+      console.log(tipoUsuario)
+      if(tipoUsuario === "MOTORISTA"){
+        console.log("entrou")
+        console.log(contactId)
+        console.log(usuarioId)
+       response = await axios.get(`http://localhost:8080/mensagem/buscar-mensagens-entre-usuarios-alternativo?usuarioId=${usuarioId}&contactId=${contactId}`);
+       console.log(response.data)
+      }
+      else if(tipoUsuario === "PASSAGEIRO"){
+        console.log("entrou")
+        console.log("id do usuario " + sessionStorage.idUsuario)  
+        console.log("id do motorista " + contactId)
+        response = await axios.get(`http://localhost:8080/mensagem/buscar-mensagens-entre-usuarios-alternativo?usuarioId=${sessionStorage.idUsuario}&contactId=${contactId}`);
+        console.log(response.data)
+      }
+      setMessages(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar mensagens:", error);
+    }
+  };
+  
 
-  const sendMessage = () => {
-    if (newMessage.trim() === "") return;
+  const sendMessage = async () => {
+    const senderId = sessionStorage.idUsuario;
+    const receiverId = selectedContact.id;
+
+    console.log(senderId)
+    console.log(receiverId)
+    if (!senderId || !receiverId || newMessage.trim() === "") return;
+
     const newMsg = {
-      content: newMessage,
-      isSentByCurrentUser: true,
+        senderId,
+        receiverId,
+        texto: newMessage,
     };
-    setMessages([...messages, newMsg]);
-    setNewMessage("");
+
+    try {
+        const response = await axios.post(`http://localhost:8080/mensagem/salvar`, newMsg);
+        setMessages([...messages, response.data]);
+        setNewMessage("");
+    } catch (error) {
+        console.error("Erro ao enviar mensagem:", error);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -48,7 +86,6 @@ const Chat = ({ selectedContact }) => {
       </div>
     );
   }
-
   return (
     <div className={styles["chat"]}>
       <h2>{selectedContact.name}</h2>
@@ -58,12 +95,17 @@ const Chat = ({ selectedContact }) => {
             Inicie uma conversa com {selectedContact.name}
           </p>
         ) : (
-          messages.map((msg, index) => (
-            <Message
+          [...messages].reverse().map((msg, index) => (
+            <div
               key={index}
-              content={msg.content}
-              isSentByCurrentUser={msg.isSentByCurrentUser}
-            />
+              className={`${styles["message"]} ${
+                msg.senderId === sessionStorage.idUsuario
+                  ? styles["sent-by-current-user"]
+                  : styles["sent-by-other-user"]
+              }`}
+            >
+              {msg.texto}
+            </div>
           ))
         )}
       </div>
@@ -79,87 +121,5 @@ const Chat = ({ selectedContact }) => {
       </div>
     </div>
   );
-};
-
+}
 export default Chat;
-//Parte para integração
-// const Chat = () => {
-  // const [messages, setMessages] = useState([]);
-  // const [newMessage, setNewMessage] = useState('');
-
-  // useEffect(() => {
-  //   if (selectedContact) {
-  //     fetchMessages(selectedContact.id);
-  //   }
-  // }, [selectedContact]);
-
-  // const fetchMessages = async (contactId) => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:8080/api/messages?contactId=${contactId}`);
-  //     setMessages(response.data);
-  //   } catch (error) {
-  //     console.error('Erro ao buscar mensagens:', error);
-  //   }
-  // };
-
-  // const sendMessage = async () => {
-  //   if (newMessage.trim() === '') return;
-  //   try {
-  //     const response = await axios.post('http://localhost:8080/api/messages', {
-  //       content: newMessage,
-  //       contactId: selectedContact.id,
-  //       isSentByCurrentUser: true,
-  //     });
-  //     setMessages([...messages, response.data]);
-  //     setNewMessage('');
-  //   } catch (error) {
-  //     console.error('Erro ao enviar mensagem:', error);
-  //   }
-  // };
-
-// import { useLocation } from "react-router-dom";
-// import Sidebar from "../../layout/sidebar/Sidebar";
-// c
-// import { useState } from "react";
-
-// function Chat() {
-//   let local = useLocation();
-//   const [viewConversation, setviewConversation] = useState(false)
-
-//   function handleChange() {
-//     setviewConversation(true)
-//   }
-
-//   return (
-//     <>
-//       <Sidebar currentPageName={local.pathname} />
-//       <div className={styles["main"]}>
-//         <div className={styles["box"]}>
-//           <div className={styles["left-side"]}>
-//             <div className={styles["header"]}>
-//               <h2>Conversas</h2>
-//             </div>
-//             <div className={styles["conversas"]}>
-//               <div className={styles["chat"]} onClick={handleChange}>
-//                 <img src="" alt="" />
-//                 <div className={styles["message"]}>
-//                   <h3>Ewerton Lima</h3>
-//                   <span>Av. Paulista, 2000</span>
-//                 </div>
-//                 <div className={styles["notification"]}>2</div>
-//               </div>
-//               <div className={styles["divisoria"]}></div>
-//             </div>
-//           </div>
-//           <div className={styles["right-side"]}>
-//             {/* <img src="" alt="" /> */}
-//             <span>Clique em uma conversa para exibir as mensagens</span>
-//             <p onChange={viewConversation}>teste</p>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
-
-// export default Chat;

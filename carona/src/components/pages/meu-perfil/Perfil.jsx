@@ -36,7 +36,7 @@ function Perfil() {
         return;
       }
 
-      const response = await api.post(`/usuario/detalhes/${userId}`);
+      const response = await api.post(`/usuario/  /${userId}`);
       setNome(response.data.nome);
       let dataNascimento = response.data.dataNascimento;
        dataNascimento = dataNascimento.split('-').reverse().join('-');

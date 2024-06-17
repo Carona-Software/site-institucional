@@ -11,6 +11,8 @@ import api from '../../../Api'
 import loading from '../../../utils/assets/loading.gif'
 import { inputSomenteNumero } from "../../../utils/InputValidations";
 import axios from "axios";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 const apiUrl = "http://localhost:8080"; 
 
@@ -119,22 +121,35 @@ function OferecerCarona() {
     const handleViagemSave = async () => {
         if (!dataHora.data || !dataHora.hora) {
             console.error("A data e o horário da viagem devem ser preenchidos.");
+            toast.error("A data e o horário da viagem devem ser preenchidos.");
             return;
         }
     
         const dataHoraViagem = `${dataHora.data}T${dataHora.hora}:00`;
         const viagemAtualizada = { ...viagem, diaViagem: dataHora.data, horario: dataHora.hora };
-
-        console.log(JSON.stringify(viagemAtualizada))
-        
+    
+        if(viagemAtualizada.latitudePontoPartida === "" || viagemAtualizada.latitudePontoDestino === ""){
+            console.error("Os pontos de partida e destino devem ser preenchidos.");
+            toast.error("Os pontos de partida e destino devem ser preenchidos.");
+            return;
+        }
+    
+        // Adicione verificações para outros campos aqui
+        if(!viagemAtualizada.nomeCampo){
+            console.error("O campo 'nomeCampo' deve ser preenchido.");
+            toast.error("O campo 'nomeCampo' deve ser preenchido.");
+            return;
+        }
+    
         try {
             const response = await axios.post(`${apiUrl}/viagem/criar-viagem`, viagemAtualizada);
             console.log(response.data);
+            toast.success("Carona cadastrada com sucesso!");
         } catch (error) {
             console.error("Erro ao cadastrar carona:", error.message);
+            toast.error("Erro ao cadastrar carona. Tente novamente mais tarde.");
         }
     };
-    
     
     
     
@@ -299,6 +314,7 @@ function OferecerCarona() {
                         </div>
                     </div>
                 </div>
+                <ToastContainer/>
             </div>
         </>
 

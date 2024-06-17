@@ -64,18 +64,67 @@ function RedefinirSenha() {
         setNovaSenha(e.target.value)
     }
 
-    function submitNovaSenha() {
-        const formattedString = Object.values(codigo).join('').toUpperCase();
-        setCodigoFormatado(formattedString)
+  async function submitNovaSenha() {
+    const formattedString = Object.values(codigo).join('').toUpperCase();
+    setCodigoFormatado(formattedString);
+    console.log('Código formatado:', formattedString);
+
+    // Verificar se todos os campos foram preenchidos
+    if (formattedString.length !== 6 || novaSenha === '' || confirmacaoNovaSenha === '') {
+        toast.error('Preencha todos os campos para redefinir a senha!');
+        return;
     }
+
+    // Verificar se as senhas coincidem
+    if (novaSenha !== confirmacaoNovaSenha) {
+        toast.error('As senhas digitadas não coincidem!');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}/usuario/recuperarSenha?email=${email}&novaSenha=${novaSenha}&token=${formattedString}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (response.ok) {
+            toast.success('Senha redefinida com sucesso!');
+            console.log('Senha redefinida com sucesso!');
+            window.location.href = '/login';
+            setIsModalOpen(false);
+        } else {
+            toast.error('Erro ao redefinir a senha');
+        }
+    } catch (error) {
+        toast.error('Erro ao redefinir a senha');
+    }
+}
+
+    
     async function handleEmailSubmit() {
         console.log('Email para recuperação de senha:', email);
+
+        if(email === '') {
+            toast.error('Preencha o campo de email para continuar!');
+            return;
+        }
     
         try {
-            const response = await axios.post(`${apiUrl}usuario/solicitarRecuperacaoSenha`, { email });
-            if (response.status === 200) {
+            const response = await fetch(`${apiUrl}/usuario/solicitarRecuperacaoSenha?email=${email}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+    
+            console.log("Resposta do back end " + response.status);
+    
+            if (response.ok) {
                 toast.success('Email enviado com sucesso!');
                 console.log('Email enviado com sucesso!');
+                setIsModalOpen(false);
             } else {
                 toast.error('Erro ao enviar email de recuperação de senha');
             }
@@ -83,6 +132,9 @@ function RedefinirSenha() {
             toast.error('Erro ao enviar email de recuperação de senha');
         }
     }
+    
+
+    
     
     return (
         <div className={styles.main}>
