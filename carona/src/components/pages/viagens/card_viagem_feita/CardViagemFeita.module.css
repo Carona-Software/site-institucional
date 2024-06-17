@@ -7,84 +7,84 @@
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+}
 
-    & .viagem-img {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        width: 20%;
+.viagem-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 20%;
+}
 
-        & img {
-            height: 70px;
-        }
-    }
+.viagem-img img {
+    height: 70px;
+}
 
-    & .column-separator {
-        height: 100%;
-        border-right: 2px solid #E6E6E6;
-    }
+.column-separator {
+    height: 100%;
+    border-right: 2px solid #E6E6E6;
+}
 
-    & .viagem-info {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        justify-content: space-evenly;
-        height: 100%;
-        width: 65%;
-        margin-left: 20px;
-        color: #173e6d;
-        font-weight: 600;
-        font-size: 20px;
+.viagem-info {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-evenly;
+    height: 100%;
+    width: 65%;
+    margin-left: 20px;
+    color: #173e6d;
+    font-weight: 600;
+    font-size: 20px;
+}
 
-        & .cidade-info {
-            display: flex;
-            align-items: center;
-            justify-content: start;
-            gap: 10px;
-        }
-    }
+.cidade-info {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+}
 
-    & .viagem-actions {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        justify-content: space-evenly;
-        height: 100%;
-        width: 20%;
+.viagem-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-evenly;
+    height: 100%;
+    width: 20%;
+}
 
-        & button {
-            width: 90%;
-            height: 32px;
-            font-size: 16px;
-        }
+.viagem-actions button {
+    width: 90%;
+    height: 32px;
+    font-size: 16px;
+}
 
-        & .button-detalhes {
-            background-color: #173e6d;
-            border: 3px solid #173e6d;
-            color: #fff;
-            transition: all 0.2s;
-        }
+.button-detalhes {
+    background-color: #173e6d;
+    border: 3px solid #173e6d;
+    color: #fff;
+    transition: all 0.2s;
+}
 
-        & .button-detalhes:hover {
-            color: #f1f1f1;
-            border: 2px solid #0F2949;
-            background-color: #0F2949;
-            transition: all 0.2s;
-        }
+.button-detalhes:hover {
+    color: #f1f1f1;
+    border: 2px solid #0F2949;
+    background-color: #0F2949;
+    transition: all 0.2s;
+}
 
-        & .button-avaliar {
-            background-color: #E6AD47;
-            border: 2px solid #E6AD47;
-            color: #fff;
-            transition: all 0.2s;
-        }
+.button-avaliar {
+    background-color: #E6AD47;
+    border: 2px solid #E6AD47;
+    color: #fff;
+    transition: all 0.2s;
+}
 
-        & .button-avaliar:hover {
-            background-color: #c0903b;
-            border: 2px solid #c0903b;
-            color: #f1f1f1;
-            transition: all 0.2s;
-        }
-    }
+.button-avaliar:hover {
+    background-color: #c0903b;
+    border: 2px solid #c0903b;
+    color: #f1f1f1;
+    transition: all 0.2s;
 }

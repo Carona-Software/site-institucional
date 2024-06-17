@@ -8,84 +8,115 @@
     rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
   display: flex;
   align-items: center;
+}
 
-  & .carro-img {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 20%;
+.carro-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 20%;
+}
 
-    & img {
-      height: 70px;
-    }
-  }
+.carro-img img {
+  height: 70px;
+}
 
-  & .column-separator {
-    height: 100%;
-    border-right: 2px solid #e6e6e6;
-  }
+.column-separator {
+  height: 100%;
+  border-right: 2px solid #e6e6e6;
+}
 
-  & .carro-info {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: space-evenly;
-    height: 100%;
-    width: 65%;
-    margin-left: 20px;
-    color: #173e6d;
-    font-weight: 600;
-    font-size: 20px;
+.carro-info {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-evenly;
+  height: 100%;
+  width: 50%;
+  margin-left: 20px;
+  color: #173e6d;
+  font-weight: 600;
+  font-size: 20px;
+}
 
-    & .nome-info {
-      display: flex;
-      align-items: center;
-      justify-content: start;
-      gap: 10px;
-    }
-  }
+.nome-info {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+}
 
-  & .carro-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: space-evenly;
-    height: 100%;
-    width: 20%;
+.carro-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Alinha os botões à direita */
+  width: 30%;
+  margin-right: 20px; /* Adiciona margem direita para separar dos outros elementos */
+}
 
-    & button {
-      width: 90%;
-      height: 32px;
-      font-size: 16px;
-      margin: 0;
-    }
+.button-detalhes,
+.button-editar,
+.button-excluir {
+  background-color: #173e6d;
+  border: 3px solid #173e6d;
+  color: #fff;
+  transition: all 0.2s;
+  margin-left: 10px; /* Adiciona margem esquerda para separar dos outros botões */
+}
 
-    & .button-detalhes {
-      background-color: #173e6d;
-      border: 3px solid #173e6d;
-      color: #fff;
-      transition: all 0.2s;
-    }
+.button-detalhes:hover,
+.button-editar:hover,
+.button-excluir:hover {
+  color: #f1f1f1;
+  border: 2px solid #0f2949;
+  background-color: #0f2949;
+  transition: all 0.2s;
+}
 
-    & .button-detalhes:hover {
-      color: #f1f1f1;
-      border: 2px solid #0f2949;
-      background-color: #0f2949;
-      transition: all 0.2s;
-    }
+.button-cancelar {
+  background-color: #fff;
+  border: 2px solid #d96464;
+  color: #d96464;
+  transition: all 0.2s;
+  margin-left: 10px; /* Adiciona margem esquerda para separar dos outros botões */
+}
 
-    & .button-cancelar {
-      background-color: #fff;
-      border: 2px solid #d96464;
-      color: #d96464;
-      transition: all 0.2s;
-    }
+.button-cancelar:hover {
+  background-color: #d96464;
+  color: #fff;
+  transition: all 0.2s;
+}
+.confirm-button{
+  background-color: #ff2828;
+  border: 3px solid #ff2828;
+  color: #fff;
+  transition: all 0.2s;
+  margin-left: 10px; 
+}
+.modal-buttons {
+  display: flex;
+  justify-content: space-between; /* Para alinhar os botões em extremidades opostas */
+  margin-top: 20px; /* Adiciona margem superior para separar dos outros elementos */
+}
 
-    & .button-cancelar:hover {
-      background-color: #d96464;
-      color: #fff;
-      transition: all 0.2s;
-    }
-  }
+.confirm-button {
+  background-color: #ff0000;
+  border: 2px solid #ff0000;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.confirm-button:hover {
+  color: #f1f1f1;
+  border: 2px solid #ff0000;
+  background-color: #ff0000;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background-color: #64d97b;
+  border: 2px solid #64d97b;
+  color: #fff;
+  transition: all 0.2s;
 }

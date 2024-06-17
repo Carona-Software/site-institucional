@@ -7,6 +7,8 @@ import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import ActionButton from '../../layout/action_button/ActionButton';
 import { Link } from 'react-router-dom';
 import api from '../../../Api';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';//
 
 function Login() {
   const [user, setUser] = useState({
@@ -28,6 +30,13 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+  
+    if (!user.email || !user.senha) {
+      toast.error('Preencha todos os campos para continuar.');
+      setIsLoading(false);
+      return;
+    }
   
     api.post('/usuario/login', null, { params: user })
       .then((response) => {
@@ -41,12 +50,12 @@ function Login() {
   
       })
       .catch(error => {
-        if (error.response && error.response.status === 401) {
-          console.log('Erro ao realizar login: Credenciais inválidas.');
-          // Trate aqui o erro de credenciais inválidas
-          // Exemplo: exibir uma mensagem de erro para o usuário
+        if (error.response) {
+          console.log('Erro ao realizar login:', error.response.data);
+          toast.error('Erro ao realizar login. Verifique as credenciais e tente novamente.');
         } else {
-          console.log('Erro ao realizar login:', error);
+          console.log('Erro ao realizar login:', error.message);
+          toast.error('Erro ao realizar login. Tente novamente mais tarde.');
         }
       })
       .finally(() => {
@@ -96,6 +105,7 @@ function Login() {
           <Link to='/cadastro'><p>Não tenho conta, quero me cadastrar</p></Link>
         </form>
       </div>
+      <ToastContainer />
     </Container>
   );
 }

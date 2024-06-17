@@ -4,119 +4,169 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+}
 
+.div-illustration {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-    & .div-illustration {
-        height: 100%;
-        width: 50%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+.div-illustration img {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    align-self: center;
+}
 
-        & img {
-            width: 80%;
-            height: 80%;
-            display: flex;
-            align-self: center;
-        }
-    }
+.div-info {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0 30px;
+}
 
-    & .div-info {
-        height: 100%;
-        width: 50%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-evenly;
-        padding: 0 30px;
+.div-info h3 {
+    font-weight: 600;
+    font-size: 24px;
+    width: 90%;
+}
 
-        & h3 {
-            font-weight: 600;
-            font-size: 24px;
-            width: 90%;
-        }
+.box-codigo {
+    width: 90%;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-between;
+}
 
-        & .box-codigo {
-            width: 90%;
-            height: 90px;
-            display: flex;
-            flex-direction: column;
-            align-items: start;
-            justify-content: space-between;
+.box-codigo h4 {
+    font-size: 24px;
+    font-weight: 600;
+}
 
-            & h4 {
-                font-size: 24px;
-                font-weight: 600;
-            }
+.codigo-inputs {
+    width: 55%;
+    height: 50px;
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+}
 
-            & .codigo-inputs {
-                width: 55%;
-                height: 50px;
-                display: flex;
-                align-items: start;
-                justify-content: space-between;
+.codigo-inputs input {
+    border: 2px solid #173e6d;
+    background-color: #fff;
+    outline: none;
+    height: 50px;
+    width: 45px;
+    border-radius: 8px;
+    font-size: 28px;
+    color: #173e6d;
+    text-align: center;
+    text-transform: uppercase;
+}
 
-                & input {
-                    border: 2px solid #173e6d;
-                    background-color: #fff;
-                    outline: none;
-                    height: 50px;
-                    width: 45px;
-                    border-radius: 8px;
-                    font-size: 28px;
-                    color: #173e6d;
-                    text-align: center;
-                    text-transform: uppercase;
-                }
-            }
-        }
+.box-senhas {
+    width: 90%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    gap: 60px;
+}
 
-        & .box-senhas {
-            width: 90%;
-            display: flex;
-            align-items: start;
-            justify-content: start;
-            gap: 60px;
-        }
+.validations {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 90%;
+}
 
-        & .validations {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 90%;
+.validations p {
+    font-size: 20px;
+    font-weight: 500;
+    color: #173e6d;
+}
 
-            & p {
-                font-size: 20px;
-                font-weight: 500;
-                color: #173e6d;
-            }
+.box-validators {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+}
 
-            & .box-validators {
-                width: 100%;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: start;
+.validator {
+    width: 50%;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 500;
+}
 
-                & .validator {
-                    width: 50%;
-                    height: 30px;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    font-size: 20px;
-                    font-weight: 500;
-                }
+.invalid {
+    color: #a0a0a0;
+}
 
-                & .invalid {
-                    color: #a0a0a0;
-                }
+.valid {
+    color: #173e6d;
+}
 
-                & .valid {
-                    color: #173e6d;
-                }
-            }
-        }
+.box-button {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+}
 
-    }
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal input {
+    width: 100%;
+    height: 50px;
+    border: 2px solid #173e6d;
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: 20px;
+    color: #173e6d;
+    outline: none;
+}
+.modalContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+.modalContent button {
+    width: 100%;
+    height: 40px;
+    color: white;
+    font-size: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.modalContent button.cancel {
+    background-color: #a0a0a0;
+}
+.modalContent h2 {
+    margin-bottom: 20px;
 }

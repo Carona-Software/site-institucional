@@ -5,9 +5,9 @@ import { FaLocationDot } from "react-icons/fa6";
 function CardViagem({ fotoUser, nomeUser, notaUser, horarioPartida, horarioChegada, preco, distancia, onClickEvent }) {
     
     const getCarColor = (distance) => {
-        if (distance <= 30) {
+        if (distance < 30) {
             return 'green';
-        } else if (distance > 30 && distance <= 60) {
+        } else if (distance >= 31 && distance < 60) {
             return 'yellow';
         } else {
             return 'red';

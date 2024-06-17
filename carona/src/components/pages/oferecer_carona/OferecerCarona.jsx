@@ -10,34 +10,52 @@ import SearchGeocode from "../../map/search_geocode/SearchGeocode";
 import api from '../../../Api'
 import loading from '../../../utils/assets/loading.gif'
 import { inputSomenteNumero } from "../../../utils/InputValidations";
+import axios from "axios";
+
+const apiUrl = "http://localhost:8080"; 
 
 function OferecerCarona() {
     const idUser = localStorage.getItem('idUser')
-    // const generoUser = localStorage.getItem('generoUser')
     const generoUser = 'FEMININO'
-
 
     let local = useLocation();
     const navigate = useNavigate()
 
     const [isLoading, setIsLoading] = useState(false)
-
-    const [carrosUser, setCarrosUser] = useState([
-        {
-            id: 1,
-            marca: "Ford",
-            modelo: "Ka"
-        }
-    ])
+    const [carrosUser, setCarrosUser] = useState([])
+    const [primeiroIdCarro, setPrimeiroIdCarro] = useState(""); 
 
     useEffect(() => {
-        api.get(`/carros/${idUser}`)
-        .then((res) => {
-            console.log(res.data);
-            setCarrosUser(res.data)
-        })
-        .catch(error => console.log(error))
-    }, [idUser])
+        let ignore = false;
+    
+        const fetchApi = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/carro/listar-carros/${sessionStorage.idUsuario}`);
+                console.log(response.data);
+                if (!ignore) {
+                    setCarrosUser(response.data);
+                    if (response.data.length > 0) {
+                        setPrimeiroIdCarro(response.data[0].idCarro); 
+                        setViagem(prevViagem => ({
+                            ...prevViagem,
+                            idCarro: response.data[0].idCarro
+                        }));
+                    }
+                    console.log(response.data);
+                    console.log(primeiroIdCarro)
+                }
+            } catch (error) {
+                console.error("Erro ao obter lista de carros:", error.message);
+            }
+        };
+    
+        fetchApi();
+    
+        return () => {
+            ignore = true;
+        };
+    }, []);
+    
 
     // gerar horas para combo box a partir da hora atual
     function gerarHorarioComboBox() {
@@ -73,19 +91,21 @@ function OferecerCarona() {
         data: '',
         hora: ''
     })
+    const idMotorista = parseInt(sessionStorage.idUsuario);
 
     const [viagem, setViagem] = useState({
-        idMotorista: idUser,
-        latitudePartida: '',
-        longitudePartida: '',
-        latitudeDestino: '',
-        longitudeDestino: '',
-        horario: '',
-        idCarro: carrosUser[0].id,
-        valor: '',
+        idCarro: primeiroIdCarro,
+        idMotorista: idMotorista,
+        latitudePontoPartida: "",
+        longitudePontoPartida: "",
+        latitudePontoDestino: "",
+        longitudePontoDestino: "",
+        diaViagem: "",
+        horario: "",
+        valor: "",
         qntPassageiros: 1,
         soMulheres: false,
-    })
+    });
 
     // useEffect(() => {
     //     api.get(`/listar-carros/${idUser}`)
@@ -97,13 +117,27 @@ function OferecerCarona() {
     // }, [idUser])
 
     const handleViagemSave = async () => {
-        setViagem({ ...viagem, horario: `${dataHora.data}T${dataHora.hora}:00` })
+        if (!dataHora.data || !dataHora.hora) {
+            console.error("A data e o horário da viagem devem ser preenchidos.");
+            return;
+        }
+    
+        const dataHoraViagem = `${dataHora.data}T${dataHora.hora}:00`;
+        const viagemAtualizada = { ...viagem, diaViagem: dataHora.data, horario: dataHora.hora };
 
-        // let response = await api.post('/cadastrar', viagem)
-        // console.log(response);
-        console.log(viagem);
-    }
-
+        console.log(JSON.stringify(viagemAtualizada))
+        
+        try {
+            const response = await axios.post(`${apiUrl}/viagem/criar-viagem`, viagemAtualizada);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Erro ao cadastrar carona:", error.message);
+        }
+    };
+    
+    
+    
+    
     return (
         <>
             <Sidebar currentPageName={local.pathname} />
@@ -126,8 +160,8 @@ function OferecerCarona() {
                                         className={styles["input-div"]}
                                         onClickEvent={(place) => setViagem({
                                             ...viagem,
-                                            latitudePartida: place.geometry.coordinates[0],
-                                            longitudePartida: place.geometry.coordinates[1]
+                                            latitudePontoPartida: place.geometry.coordinates[1],
+                                            longitudePontoPartida: place.geometry.coordinates[0]
                                         })}
                                     />
 
@@ -143,8 +177,8 @@ function OferecerCarona() {
                                         className={styles["input-div"]}
                                         onClickEvent={(place) => setViagem({
                                             ...viagem,
-                                            latitudeDestino: place.geometry.coordinates[0],
-                                            longitudeDestino: place.geometry.coordinates[1]
+                                            latitudePontoDestino: place.geometry.coordinates[1],
+                                            longitudePontoDestino: place.geometry.coordinates[0]
                                         })}
                                     />
                                 </div>
@@ -175,22 +209,23 @@ function OferecerCarona() {
 
                                 <div className={styles["box-select"]}>
                                     <h4>Carro</h4>
-                                    <select>
-                                        {
-                                            carrosUser.length > 0 ?
-                                                carrosUser.map(carro => (
-                                                    <option
-                                                        key={carro.id}
-                                                        value={carro.id}
-                                                        onClick={() => setViagem({ ...viagem, idCarro: carro.id })}
-                                                    >
-                                                        {carro.marca} {carro.modelo}
-                                                    </option>
-                                                ))
-                                                : <option value={null}>Não há carros</option>
-                                        }
+                                    <select onChange={(e) => setViagem({ ...viagem, idCarro: e.target.value })}>
+                                        {carrosUser.length > 0 ? (
+                                            carrosUser.map(carro => (
+                                                <option
+                                                    key={carro.idCarro}
+                                                    value={carro.idCarro}
+                                                >
+                                                    {carro.marca} {carro.modelo}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option value={null}>Não há carros</option>
+                                        )}
                                     </select>
+
                                 </div>
+
 
                                 <div className={styles["box-input"]} style={{ width: "44%" }}>
                                     <h4>Preço (passageiro)</h4>
@@ -223,7 +258,7 @@ function OferecerCarona() {
                                 </div>
 
                                 {
-                                    generoUser == "FEMININO" &&
+                                    generoUser === "FEMININO" &&
                                     <div className={styles["box-input"]} style={{ width: "44%" }}>
                                         <h4>Apenas mulheres</h4>
 

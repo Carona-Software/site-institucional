@@ -5,6 +5,8 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { LuCircleDashed } from "react-icons/lu";
 import { FaCalendarDays } from "react-icons/fa6";
 import { FaDotCircle } from "react-icons/fa";
+
+import { ToastContainer, toast } from 'react-toastify';
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import AnimacaoEstrada from '../../layout/animacao_estrada/AnimacaoEstrada';
@@ -30,20 +32,45 @@ function ProcurarCarona() {
         console.log("Valor do id " + viagemId)
         navigate(`/viagens/detalhes/${viagemId}`);
     };
-
     const handleSubmitViagem = async () => {
-        console.log("Viagem a pesquisar: " + JSON.stringify(viagemAPesquisar));
+        // Verifica se todos os campos estão preenchidos
+        if (!viagemAPesquisar.latitudePartida || !viagemAPesquisar.longitudePartida || !viagemAPesquisar.latitudeDestino || !viagemAPesquisar.longitudeDestino || !viagemAPesquisar.diaViagem) {
+            toast.warning("Por favor, preencha todos os campos antes de pesquisar viagens.");
+            return;
+        }
     
+        // Validação da data e do mês
+        const today = new Date();
+        const selectedDate = new Date(viagemAPesquisar.diaViagem);
+        
+        if (selectedDate <= today) {
+            toast.error("A data da viagem deve ser um dia após a data atual.");
+            return;
+        }
+        
+        const nextYear = new Date();
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        if (selectedDate > nextYear) {
+            toast.error("A data da viagem não pode ser mais do que um ano no futuro.");
+            return;
+        }
+        
+        if (selectedDate.getMonth() <= today.getMonth()) {
+            toast.error("O mês da viagem deve ser superior ao mês atual.");
+            return;
+        }
+        
         try {
             const response = await axios.post('http://localhost:8080/viagem/buscar-viagens', viagemAPesquisar);
-
-            console.log("ESSE FDP DO CARALHO DEU RESULTADO" + JSON.stringify(response.data));
-            console.log(response.data);
+            console.log("Resposta da API: " + JSON.stringify(response.data));
             setViagensEncontradas(response.data);
         } catch (error) {
-            console.log(error);
+            console.error("Erro ao buscar viagens:", error);
         }
     }
+    
+    
+    
     
     return (
         <>
@@ -128,32 +155,33 @@ function ProcurarCarona() {
                         </div>
                     }
 
-                    {
-                        viagensEncontradas.length > 0
-                            ? <div className={styles["viagens"]}>
-                                {viagensEncontradas.map((viagem) => {
-                                    const horarioPartida = viagem.inicioViagem;
-                                    console.log("Id da viagem " + viagem.idViagem)
-                                    const horarioChegada = viagem.fimViagem.substring(11, 16);
-                                    return (
-                                        <CardViagem
-                                            key={viagem.idViagem}
-                                            nomeUser={viagem.nomeMotorista}
-                                            notaUser={viagem.quantidadeEstrelas}
-                                            horarioPartida={horarioPartida}
-                                            horarioChegada={horarioChegada}
-                                            preco={viagem.valor}
-                                            distancia={viagem.distanciaPontoDestinoViagem} // Passando a distância para o componente
-                                            onClickEvent={() => handleCardClick(viagem.idViagem)} 
-                                        />
-                                    );
-                                })}
-                            </div>
-                            : <div className={styles["not-to-show"]}>
-                                <h4>Nenhuma viagem para mostrar</h4>
-                                <img src={notFound} alt="Nenhuma viagem encontrada" />
-                            </div>
-                    }
+                        {
+                            viagensEncontradas.length > 0
+                                ? <div className={styles["viagens"]}>
+                                    {viagensEncontradas.map((viagem) => {
+                                        const horarioPartida = viagem.inicioViagem;
+                                        const horarioChegada = viagem.fimViagem ? viagem.fimViagem.substring(11, 16) : ''; // Adicionando verificação para evitar erro
+                                        return (
+                                            <CardViagem
+                                                key={viagem.idViagem}
+                                                nomeUser={viagem.nomeMotorista}
+                                                notaUser={viagem.quantidadeEstrelas}
+                                                horarioPartida={horarioPartida}
+                                                horarioChegada={horarioChegada}
+                                                preco={viagem.valor}
+                                                distancia={viagem.distanciaPontoDestinoViagem} // Passando a distância para o componente
+                                                onClickEvent={() => handleCardClick(viagem.idViagem)} 
+                                            />
+                                        );
+                                    })}
+                                </div>
+                                : <div className={styles["not-to-show"]}>
+                                    <h4>Nenhuma viagem para mostrar</h4>
+                                    <img src={notFound} alt="Nenhuma viagem encontrada" />
+                                </div>
+                        }
+                <ToastContainer />
+                                    
                 </div>
             </div>
         </>

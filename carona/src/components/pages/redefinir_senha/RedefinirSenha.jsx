@@ -1,16 +1,20 @@
 import styles from './RedefinirSenha.module.css'
 import img from '../../../utils/assets/esqueci-senha-image.svg'
 import Input from '../../layout/input/Input'
-import { FiEye } from "react-icons/fi";
-import { FiEyeOff } from "react-icons/fi";
-import { useRef, useState } from 'react';
-import { FaRegCircle } from "react-icons/fa";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useRef, useState, useEffect } from 'react';
+import { FaRegCircle, FaCheck } from "react-icons/fa";
 import ActionButton from '../../layout/action_button/ActionButton';
-import { FaCheck } from "react-icons/fa";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
+import api from '../../../Api';
+import axios from 'axios';
+
+
+const apiUrl = "http://localhost:8080";
 
 function RedefinirSenha() {
-   // var keycode = require('keycode');
-    const [codigo, setCodigo] = useState()
+    const [codigo, setCodigo] = useState({})
     const [codigoFormatado, setCodigoFormatado] = useState('')
 
     const [showPassword, setShowPassword] = useState(false)
@@ -24,6 +28,9 @@ function RedefinirSenha() {
     const [hasNumero, setHasNumero] = useState(false)
     const [hasEspecial, setHasEspecial] = useState(false)
 
+    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [email, setEmail] = useState('');
+
     const inputRef1 = useRef(null);
     const inputRef2 = useRef(null);
     const inputRef3 = useRef(null);
@@ -31,31 +38,16 @@ function RedefinirSenha() {
     const inputRef5 = useRef(null);
     const inputRef6 = useRef(null);
 
+    useEffect(() => {
+        setIsModalOpen(true);
+    }, []);
+
     function handleCodigoChange(event, nextInputRef, prevInputRef) {
-        // const { value, target, keyCode } = event;
-        // target.value = event.target.value
-        // console.log('Value: ' +value);
-        // console.log('Keycode: ' + keyCode);
-
-        setCodigo({...codigo, [event.target.name]: event.target.value})
-        console.log(codigo);
-
-        // const keyName = keycode(keyCode);
-        
-        // const isDeleteKeyPressed = keyName === 'Delete' || keyName === 'Backspace';
-        // console.log(isDeleteKeyPressed);
-
-        // if (isDeleteKeyPressed ) {
-        //     prevInputRef.current.focus()
-        // } else {
-            nextInputRef.current.focus()
-        // }
-
-        // console.log(event.keycode);
+        setCodigo({ ...codigo, [event.target.name]: event.target.value })
+        nextInputRef.current.focus()
     }
 
     function handleSenha(e) {
-
         let senhaAtual = e.target.value
 
         // Validações de senha
@@ -74,13 +66,43 @@ function RedefinirSenha() {
 
     function submitNovaSenha() {
         const formattedString = Object.values(codigo).join('').toUpperCase();
-        console.log('Código formatado: ' + formattedString);
-
         setCodigoFormatado(formattedString)
     }
-
+    async function handleEmailSubmit() {
+        console.log('Email para recuperação de senha:', email);
+    
+        try {
+            const response = await axios.post(`${apiUrl}usuario/solicitarRecuperacaoSenha`, { email });
+            if (response.status === 200) {
+                toast.success('Email enviado com sucesso!');
+                console.log('Email enviado com sucesso!');
+            } else {
+                toast.error('Erro ao enviar email de recuperação de senha');
+            }
+        } catch (error) {
+            toast.error('Erro ao enviar email de recuperação de senha');
+        }
+    }
+    
     return (
-        <div className={styles["main"]}>
+        <div className={styles.main}>
+            {isModalOpen && (
+                <div className={styles.modal}>
+                    <div className={styles.modalContent}>
+                        <h2>Recuperar Senha</h2>
+                        <Input
+                        label="Email"
+                        name="email"
+                        id="email"
+                        placeholder="Digite seu email"
+                        type="email"
+                        onChangeEvent={(e) => setEmail(e.target.value)}
+                        style={{ width: '500px', height: '40px' }} // Adicione esta linha
+                    />
+                        <ActionButton type="primary" label="Enviar" onClickEvent={handleEmailSubmit} />
+                    </div>
+                </div>
+            )}
             {/* div de imagem */}
             <div className={styles['div-illustration']}>
                 <h1>Redefinição de Senha</h1>
@@ -136,7 +158,7 @@ function RedefinirSenha() {
                 <div className={styles["box-button"]}>
                     <ActionButton type='primary' label='Redefinir senha' onClickEvent={submitNovaSenha} />
                 </div>
-
+                <ToastContainer />
             </div>
         </div>
     )

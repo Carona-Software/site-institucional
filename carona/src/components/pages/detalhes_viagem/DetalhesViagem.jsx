@@ -12,6 +12,8 @@ import placaIcon from '../../../utils/assets/license-plate.png'
 import { FaCar } from "react-icons/fa";
 import AnimacaoEstrada from '../../layout/animacao_estrada/AnimacaoEstrada';
 import CardPassageiro from './card_passageiro/CardPassageiro';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import MapGeolocation from '../../map/MapGeolocation';
 import axios from 'axios';
 
@@ -27,17 +29,65 @@ function convertMinutesToHours(minutes) {
 }
 
 
+function translateColor(cor) {
+    switch(cor.toLowerCase()) {
+        case 'vermelho':
+            return 'red';
+        case 'azul':
+            return 'blue';
+        case 'verde':
+            return 'green';
+        case 'amarelo':
+            return 'yellow';
+        case 'preto':
+            return 'black';
+        case 'branco':
+            return 'white';
+        case 'cinza':
+            return 'gray';
+        case 'roxo':
+            return 'purple';
+        case 'rosa':
+            return 'pink';
+        case 'laranja':
+            return 'orange';
+        case 'marrom':
+            return 'brown';
+        case 'bege':
+            return 'beige';
+        case 'turquesa':
+            return 'turquoise';
+        case 'violeta':
+            return 'violet';
+        case 'ouro':
+            return 'gold';
+        case 'prata':
+            return 'silver';
+        default:
+            return cor;
+    }
+}
+
 function DetalhesViagem() {
 
     const idViagem = getViagemIdFromUrl(); 
     const [nome , setNome] = useState("");
     const [mediaEstrelas , setMediaEstrelas] = useState("");
+    const [pontoPartida , setPartida] = useState("");
     const [horarioPartida , setHorarioPartida] = useState("");
     const [fimViagem , setFimViagem] = useState("");
     const [tempoMedio , setTempoMedio] = useState("");
     const [modeloCarro , setModeloCarro] = useState("");
     const [marcaCarro , setMarca] = useState("");
     const [placa , setPlaca] = useState("")
+    const [viagens , setViagens] = useState("");
+    const [corCarro , setCor] = useState("")
+    const [pontoDestino , setPontoDestino] = useState("");
+    const [latitudePartida, setLatitudePartida] = useState('');
+    const [longitudePartida, setLongitudePartida] = useState('');
+    const [latitudeDestino, setLatitudeDestino] = useState('');
+    const [longitudeDestino, setLongitudeDestino] = useState('');
+    const [foto , setfoto] = useState("");
     function getViagemIdFromUrl() {
         const url = window.location.href;
         const regex = /\/viagens\/detalhes\/(\d+)/;
@@ -63,9 +113,26 @@ function DetalhesViagem() {
                 const tempoMedioViagem = convertMinutesToHours(response.data.tempoMedioViagem);
                 setTempoMedio(tempoMedioViagem);
                 setModeloCarro(response.data.nomeCarro)
+
                 setMarca(response.data.modeloCarro)
                 setPlaca(response.data.placaCarro)
-                console.log(nome)
+                setPartida(response.data.nomePartida)
+                setViagens(response)
+                setPontoDestino(response.data.nomeDestino)
+                setLatitudePartida(viagens.data.latitudePontoPartida);
+                setLongitudePartida(viagens.data.longitudePontoPartida);
+                setLatitudeDestino(viagens.data.latitudePontoDestino);
+                setLongitudeDestino(viagens.data.longitudePontoDestino);
+                setfoto(response.data.foto)
+
+                console.log("Latitude partida " + latitudePartida)
+                console.log("Longitude partida " + longitudePartida)
+                console.log("Latitude destino " + latitudeDestino)
+                console.log("Longitude destino " + longitudeDestino)
+                const corCarro = response.data.corCarro;
+                const corCarroInEnglish = translateColor(corCarro);
+                setCor(corCarroInEnglish);
+                console.log("JSON DE VIAGENS " + JSON.stringify(response))
             } catch (error) {
                 console.error("Erro ao buscar detalhes da viagem:", error);
             }
@@ -128,9 +195,25 @@ function DetalhesViagem() {
  
     
 
-    const reservarViagem = () => {
-        console.log('');
-    }
+    const reservarViagem = async () => {
+        const idPassageiro = sessionStorage.idUsuario;
+        console.log("id da viagem é " + idViagem);
+        console.log("id do passageiro é " + idPassageiro);
+        
+        try {
+            const response = await axios.post(`http://localhost:8080/viagem/reservar-viagem/${idViagem}/${idPassageiro}`);
+            console.log(response);
+            alert("Viagem reservada com sucesso");
+        } catch (error) {
+            console.error("Erro ao reservar viagem:", error);
+            if (error.response && error.response.data) {
+                toast.error(error.response.data);
+            } else {
+                toast.error("Erro ao reservar viagem. Tente novamente.");
+            }
+        }
+    };
+    
 
     return (
         <>
@@ -164,7 +247,7 @@ function DetalhesViagem() {
                         <div className={styles["info"]}>
 
                             <div className={styles["motorista"]}>
-                                <img src="" alt="Foto do Motorista" />
+                                <img src={foto} alt="Foto do Motorista" />
                                 <div className={styles["nome-nota"]}>
                                     <h4>{nome}</h4>
                                     <div className={styles["nota"]}>
@@ -183,8 +266,8 @@ function DetalhesViagem() {
                                     <span className={styles["hora-definida"]}>{fimViagem}h</span>
                                 </div>
                                 <div className={styles["enderecos"]}>
-                                    <span>{viagem.enderecoDestino.logradouro}, {viagem.enderecoDestino.numero}</span>
-                                    <span>{viagem.enderecoPartida.logradouro}, {viagem.enderecoPartida.numero}</span>
+                                    <span>{pontoPartida}</span>
+                                    <span>{pontoDestino}</span>
                                 </div>
                             </div>
 
@@ -192,7 +275,7 @@ function DetalhesViagem() {
 
                             <div className={styles["info-carro"]}>
                                 <div className={styles["modelo-carro"]}>
-                                    <FaCar style={{ color: viagem.carro.cor }} />
+                                    <FaCar style={{ color: corCarro }} />
                                     <span>{marcaCarro} {modeloCarro}</span>
                                 </div>
                                 <div className={styles["placa-carro"]}>
@@ -204,22 +287,30 @@ function DetalhesViagem() {
                             <div className={styles["separator"]}></div>
 
                             <div className={styles["passageiros"]}>
-                                <h5>Passageiros</h5>
-                                <div className={styles["users"]}>
-                                    {
-                                        viagem.passageiros.length > 0
-                                            ? viagem.passageiros.map(passageiro => (
-                                                <CardPassageiro key={passageiro.id} foto={passageiro.foto} nome={passageiro.nome} nota={passageiro.nota} />
-                                            ))
-                                            : <p>Nenhum passageiro reservou esta viagem até o momento</p>
-                                    }
-                                </div>
-                            </div>
+                            <h5>Passageiros</h5>
+                     <div className={styles["users"]}>
+                        {viagens && viagens.data && viagens.data.passageiros && viagens.data.passageiros.length > 0 ? (
+                            viagens.data.passageiros.map((passageiro, index) => (
+                                <CardPassageiro key={index} nome={passageiro.nome} nota={passageiro.quantidadeEstrelas} foto={passageiro.foto} />
+                            ))
+                        ) : (
+                            <p>Nenhum passageiro reservou esta viagem até o momento</p>
+                        )}
+                    </div>
+
 
                         </div>
 
+                        <ToastContainer />
+                        </div>
+
                         <div className={styles["mapa"]}>
-                            {/* <MapGeolocation /> */}
+                        {/* <MapGeolocation 
+                        latitudePartida={latitudePartida}
+                        longitudePartida={longitudePartida}
+                        latitudeDestino={latitudeDestino}
+                        longitudeDestino={longitudeDestino}
+                    /> */}
                         </div>
                     </div>
                 </div>
