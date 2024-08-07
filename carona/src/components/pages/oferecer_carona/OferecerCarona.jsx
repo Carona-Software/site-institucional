@@ -28,7 +28,7 @@ function OferecerCarona() {
     {
       id: 1,
       marca: "Ford",
-      modelo: "Ka",
+      modelo: "Focus",
     },
   ]);
 
