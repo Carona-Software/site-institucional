@@ -35,6 +35,7 @@ body {
             color: #173e6d;
             padding: 0 5px;
             box-sizing: border-box;
+            z-index: 3;
 
             & .arrow {
                 font-size: 28px;

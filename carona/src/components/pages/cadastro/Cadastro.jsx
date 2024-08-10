@@ -9,23 +9,37 @@ import CadastroPessoal from "../cadastroPessoal/CadastroPessoal";
 import CadastroEndereco from "../cadastroEndereco/CadastroEndereco";
 import CadastroUser from "../cadastroUser/CadastroUser";
 import axios from "axios";
+import api from "../../../Api";
 
 function Cadastro() {
   const navigate = useNavigate();
+
   const [currentComponent, setCurrentComponent] = useState(1);
-  const [pessoalData, setPessoalData] = useState({});
+  const [widthProgressBar, setWidthProgressBar] = useState(33);
+  const [pessoalData, setPessoalData] = useState({
+    nome: "",
+    sexo: "",
+    email: "",
+    cpf: "",
+    dataNascimento: "",
+    perfil: "",
+    cep: "",
+    numero: "",
+    senha: "",
+    confirmacaoSenha: "",
+    imageUrl: ""
+  });
+
   const [enderecoData, setEnderecoData] = useState({
     cep: "",
     logradouro: "",
     numero: "",
     cidade: "",
-    estado: "",
+    uf: "",
+    bairro: ""
   });
 
-  const [userData, setUserData] = useState({
-    senha: "",
-    urlImagem: "",
-  });
+  const [address, setAddress] = useState({});
 
   const handleUserEvent = (event) => {
     const { name, value } = event.target;
@@ -33,154 +47,234 @@ function Cadastro() {
       ...pessoalData,
       [name]: value,
     });
-    console.log("JSON de usuario " + JSON.stringify(pessoalData));
   };
+
+  const handleCepSearch = async () => {
+    await axios.get(
+      `https://viacep.com.br/ws/${encodeURIComponent(pessoalData.cep)}/json/`
+    ).then((res) => {
+      if (res.data.erro === 'true') {
+        setAddress({});
+        handleAddressData({});
+        toast.error("Insira um CEP válido");
+      } else {
+        setAddress(res.data);
+        handleAddressData(res.data);
+      }
+    })
+      .catch(error => {
+        console.log(`Erro ao consultar CEP (${pessoalData.cep}): `, error);
+        toast.warning("Houve um erro ao buscar CEP");
+        setAddress({});
+        handleAddressData({});
+      })
+
+  }
 
   const handleAddressData = (data) => {
     setEnderecoData({
       cep: data.cep || "",
       logradouro: data.logradouro || "",
       cidade: data.localidade || "",
-      estado: data.uf || "",
-      numero: data.numero || "",
+      uf: data.uf || "",
+      bairro: data.bairro || "",
+      numero: pessoalData.numero
     });
-
-    console.log("JSON de usuario " + JSON.stringify(pessoalData));
-    console.log("JSON de cadastro " + JSON.stringify(enderecoData));
   };
 
-  const validatePessoalData = () => {
-    return (
-      pessoalData.nome &&
-      pessoalData.email &&
-      pessoalData.cpf &&
-      pessoalData.dataNascimento &&
-      pessoalData.sexo &&
-      pessoalData.perfil
-    );
+  const validarDadosPessoais = () => {
+    if (!validarNome(pessoalData.nome)) {
+      toast.error('Digite um Nome com pelo menos 3 letras')
+      return false
+    }
+
+    if (!validarSexo(pessoalData.sexo)) {
+      toast.error('Defina o Sexo')
+      return false
+    }
+
+    if (!validarEmail(pessoalData.email)) {
+      toast.error('Digite um email válido')
+      return false
+    }
+
+    if (!validarCPF(pessoalData.cpf)) {
+      toast.error('Digite um CPF válido')
+      return false
+    }
+
+    if (!validarDataNascimento(pessoalData.dataNascimento)) {
+      toast.error('É preciso ter ao menos 18 anos para o cadastro')
+      return false
+    }
+
+    if (!validarPerfil(pessoalData.perfil)) {
+      toast.error('Escolha o tipo de Perfil')
+      return false
+    }
+
+    return true
   };
 
-  const validateEnderecoData = () => {
-    return (
-      enderecoData.cep &&
-      enderecoData.numero
-    );
+  // Validações dos campos pessoais
+
+  function validarNome(nome) {
+    return ((
+      nome !== null ||
+      nome !== '') &&
+      nome.length >= 3)
+  }
+
+  function validarCPF(cpf) {
+    return cpf.length === 11
+  }
+
+  function validarEmail(email) {
+    var regex = /\S+@\S+\.\S+/;
+    return regex.test(email)
+  }
+
+  function validarPerfil(perfil) {
+    return perfil !== ''
+  }
+
+  function validarSexo(sexo) {
+    return sexo !== ''
+  }
+
+  function validarDataNascimento(data) {
+    var dataAtual = new Date()
+    var dataNasc = new Date(data)
+
+    // Calcula a diferença em milissegundos
+    const diferencaEmMs = dataAtual - dataNasc;
+    // Converte a diferença em milissegundos para dias
+    const diferencaEmDias = Math.floor(diferencaEmMs / (1000 * 60 * 60 * 24));
+    // Calcula a idade em anos, meses e dias
+    const anos = Math.floor(diferencaEmDias / 365.25);
+
+    return anos >= 18
+  }
+
+  // validação dos dados de endereço
+  const validarDadosDeEndereco = () => {
+    if (enderecoData.logradouro === "" &&
+      enderecoData.bairro === "" &&
+      enderecoData.cidade === "" &&
+      enderecoData.uf === "") {
+      toast.error('As informações de endereço devem ser preenchidas')
+      return false
+    }
+
+    if (Number(pessoalData.numero) === 0) {
+      toast.error('Insira um Número válido')
+      return false
+    }
+
+    return true
   };
 
-  const validateUserData = () => {
-    return userData.senha;
-  };
+  // validação de senhas e foto
+  const validarSenhasEFoto = () => {
+    if (!validarSenhas()) {
+      return false
+    }
+
+    if (!validarFoto()) {
+      toast.error('Escolha uma foto de perfil')
+      return false
+    }
+
+    return true
+  }
+
+  function validarSenhas() {
+    let letrasMaiusculas = /[A-Z]/;
+    let letrasMinusculas = /[a-z]/;
+    let numeros = /[0-9]/;
+    let caracteresEspeciais = /[^A-Za-z0-9]/;
+
+    if (!(letrasMaiusculas.test(pessoalData.senha) &&
+      letrasMinusculas.test(pessoalData.senha) &&
+      numeros.test(pessoalData.senha) &&
+      caracteresEspeciais.test(pessoalData.senha))) {
+      toast.error('Digite uma senha válida')
+      return false
+    }
+
+    if (pessoalData.senha !== pessoalData.confirmacaoSenha) {
+      toast.error('As senhas devem ser iguais')
+      return false
+    }
+
+    return true
+  }
+
+  function validarFoto() {
+    return pessoalData.imageUrl !== ''
+  }
 
   const handleClick = () => {
-    if (currentComponent === 1 && !validatePessoalData()) {
-      toast.error("Preencha todos os campos");
-      return;
-    }
-
-    if (currentComponent === 2 && validateEnderecoData()) {
-      toast.error("Preencha todos os campos");
-      return;
-    }
-
-    if (currentComponent === 3 && validateUserData()) {
-      toast.error("Preencha todos os campos");
-      return;
-    }
-
-    if (currentComponent === 3) {
-      const allData = {
-        pessoalData,
-        enderecoData,
-        userData,
-      };
-      console.log("Dados de Cadastro:", allData);
-      enviarDadosParaBackend(allData);
-      toast.success("Cadastro realizado com sucesso!");
+    if (currentComponent === 1) {
+      if (validarDadosPessoais()) {
+        setWidthProgressBar(66)
+        setCurrentComponent(2)
+      }
+    } else if (currentComponent === 2) {
+      if (validarDadosDeEndereco()) {
+        setWidthProgressBar(100)
+        setCurrentComponent(3)
+      }
     } else {
-      setCurrentComponent((current) => current + 1);
+      if (validarSenhasEFoto()) {
+        // cadastrar
+        // cadastrarUsuario();
+      }
     }
-    // if (currentComponent === 3) {
-    //   const allData = {
-    //     pessoalData,
-    //     enderecoData,
-    //     userData,
-    //   };
-    //   console.log("Dados de Cadastro:", allData);
-    //   enviarDadosParaBackend(allData);
-    //   toast.success("Cadastro realizado com sucesso!");
-    // } else if (validatePessoalData()) {
-    //   setCurrentComponent((current) => current + 1);
-    // } else if (validateEnderecoData()) {
-    //   setCurrentComponent((current) => current + 1);
-    // } else {
-    //   toast.error("Preencha todos os campos.");
-    // }
   };
 
   const backHandleClick = () => {
-    if (currentComponent === 1) {
-      toast.error("Você está na primeira etapa do cadastro.");
+    if (currentComponent === 2) {
+      setCurrentComponent(1);
+      setWidthProgressBar(33);
     } else {
-      setCurrentComponent((current) => current - 1);
+      setCurrentComponent(2);
+      setWidthProgressBar(66);
     }
   };
 
-  const enviarDadosParaBackend = (dados) => {
-    // Extrair os dados necessários do objeto `dados`
-    const { pessoalData, enderecoData, userData } = dados;
-
-    // Montar o objeto JSON no formato esperado pelo backend
-    const jsonCadastro = {
+  const cadastrarUsuario = () => {
+    const usuarioCriacaoDto = {
       nome: pessoalData.nome,
       cpf: pessoalData.cpf,
       email: pessoalData.email,
       senha: pessoalData.senha,
       dataNascimento: pessoalData.dataNascimento,
-      genero: pessoalData.sexo === "masculino" ? "Masculino" : "Feminino",
+      genero: pessoalData.sexo,
       tipoUsuario: pessoalData.perfil.toUpperCase(),
+      urlImagemUsuario: pessoalData.imageUrl,
       endereco: {
         cep: enderecoData.cep,
         logradouro: enderecoData.logradouro,
         cidade: enderecoData.cidade,
-        uf: enderecoData.estado.toUpperCase(),
+        uf: enderecoData.uf.toUpperCase(),
         numero: pessoalData.numero,
       },
     };
 
-    if (pessoalData.imageUrl) {
-      jsonCadastro.urlImagemUsuario = pessoalData.imageUrl;
-    }
+    console.log("Enviando dados para o cadastro: ", JSON.stringify(usuarioCriacaoDto));
 
-    console.log("Enviando dados para o backend:", JSON.stringify(jsonCadastro));
-
-    axios
-      .post("http://localhost:8080/usuario/cadastrar", jsonCadastro)
+    api
+      .post("/usuarios", usuarioCriacaoDto)
       .then((response) => {
-        const { idUsuario, tipoUsuario } = response.data;
-
-        sessionStorage.setItem("idUsuario", idUsuario);
-        sessionStorage.setItem("tipoUsuario", tipoUsuario);
-
-        window.location.href = "/login";
+        console.log('Sucesso no cadastro: ', response);
+        toast.success("Cadastro realizado com sucesso!");
+        navigate("/login")
       })
       .catch((error) => {
-        console.error("Erro ao cadastrar usuário:", error);
+        toast.error("Houve um erro ao realizar cadastro")
+        console.error("Erro ao cadastrar usuário: ", error);
       });
-  };
-
-  const handleCadastroCompleto = (formData) => {
-    // Atualiza os dados de usuário com a senha e a URL da imagem
-    setUserData({
-      senha: formData.senha,
-      urlImagem: formData.imageUrl,
-    });
-
-    console.log("JSON DE USUARIO" + pessoalData);
-    console.log("JSON DE CADASTRO" + enderecoData);
-    console.log("JSON " + userData);
-
-    // Aqui você pode enviar os dados para o backend, se necessário
-    // enviarDadosParaBackend(formData);
   };
 
   return (
@@ -190,36 +284,45 @@ function Cadastro() {
           <h1>Cadastro</h1>
           <img src={img} alt="login-imagem" />
         </div>
+
         <div className={styles["grupo-cadastro"]}>
           {currentComponent === 1 && (
-            <CadastroPessoal handleUserEvent={handleUserEvent} />
+            <CadastroPessoal handleUserEvent={handleUserEvent} userPessoalData={pessoalData} />
           )}
           {currentComponent === 2 && (
             <CadastroEndereco
               handleUserEvent={handleUserEvent}
-              handleAddressData={handleAddressData}
+              handleCepSearch={handleCepSearch}
               enderecoData={enderecoData}
+              userPessoalData={pessoalData}
             />
           )}
           {currentComponent === 3 && (
-            <CadastroUser handleUserEvent={handleUserEvent} />
+            <CadastroUser handleUserEvent={handleUserEvent} userPessoalData={pessoalData} />
           )}
-          <div className={styles["botoes"]}>
-            {currentComponent !== 1 && (
+
+          <div className={styles["grupo-progress"]}>
+            <h4>Etapa {currentComponent} de 3</h4>
+            <div className={styles["progress-container"]}>
+              <div
+                className={styles["progress-bar"]}
+                style={{ width: `${widthProgressBar}%` }}
+              />
+            </div>
+          </div>
+
+          <div className={currentComponent === 1 ? `${styles["botoes"]} ${styles["center"]}` : `${styles["botoes"]} ${styles["space-between"]}`}>
+            {(currentComponent === 2 || currentComponent === 3) &&
               <ActionButton
                 onClickEvent={backHandleClick}
                 type="secondary"
                 label="Voltar"
               />
-            )}
+            }
             <ActionButton
               onClickEvent={handleClick}
               type="primary"
               label={currentComponent === 3 ? "Finalizar" : "Próximo"}
-              // disabled={
-              //   (currentComponent !== 3 && !validatePessoalData()) ||
-              //   (currentComponent !== 3 && !validateEnderecoData())
-              // }
             />
           </div>
         </div>

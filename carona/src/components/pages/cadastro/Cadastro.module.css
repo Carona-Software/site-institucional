@@ -24,6 +24,7 @@
 
 .grupo-cadastro {
   width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -31,22 +32,27 @@
 }
 
 .botoes {
-  gap: 50px;
-  /* background-color: #173e6d; */
-  position: relative;
-  bottom: 50px;
+  height: 10%;
+  width: 80%;
   display: flex;
-  width: 60%;
   align-items: center;
+}
+
+.center {
   justify-content: center;
 }
 
+.space-between {
+  justify-content: space-between;
+}
+
 .grupo-progress {
-  width: 85%;
-  height: 5%;
+  width: 80%;
+  height: 10%;
   display: flex;
   align-items: start;
   flex-direction: column;
+  gap: 4px;
 }
 
 .progress-container {
@@ -63,5 +69,5 @@
   background-color: #173e6d;
   width: 0%;
   border-radius: 4px;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.2s ease-in-out;
 }

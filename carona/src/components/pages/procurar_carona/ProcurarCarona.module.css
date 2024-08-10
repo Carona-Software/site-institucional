@@ -120,7 +120,6 @@ body {
             justify-content: space-between;
 
             & .box-filtro {
-                width: 22%;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
@@ -153,6 +152,40 @@ body {
                         font-size: 16px;
                     }
 
+                }
+
+                & .toggle-button {
+                    width: 68px;
+                    height: 42px;
+                    padding: 0 4px;
+                    border-radius: 20px;
+                    background-color: #DFDFDF;
+                    cursor: pointer;
+                    /* transition: background-color 0.3s ease, justify-content 0.3s ease; */
+                    display: flex;
+                    align-items: center;
+                    justify-content: start;
+
+                    & input {
+                        width: 28px;
+                        height: 28px;
+                        appearance: none;
+                        margin: 0;
+                        border-radius: 50%;
+                        background-color: #fff;
+                        outline: none;
+                    }
+
+                    & input:hover {
+                        cursor: pointer;
+                    }
+
+                }
+
+                & .ativado {
+                    background-color: #529F63;
+                    justify-content: end;
+                    /* transition: background-color 0.3s ease, justify-content 0.3s ease; */
                 }
             }
         }

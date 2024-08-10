@@ -127,7 +127,7 @@ function MapGeolocation({ latitudePartida, longitudePartida, latitudeDestino, lo
                     </div>
 
                     <div className={styles["km-horas"]}>
-                        <p><span>{duracao.horas}</span>h <span>{duracao.minutos}</span> min</p>
+                        <p><span>{duracao.horas}</span>h <span>{duracao.minutos}</span>min</p>
                         <p><span>{distancia}</span> km</p>
                     </div>
                 </div>

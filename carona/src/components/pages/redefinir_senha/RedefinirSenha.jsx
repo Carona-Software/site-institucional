@@ -10,7 +10,7 @@ import { FaCheck } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 function RedefinirSenha() {
-   // var keycode = require('keycode');
+    // var keycode = require('keycode');
     const [codigo, setCodigo] = useState()
     const [codigoFormatado, setCodigoFormatado] = useState('')
 
@@ -32,27 +32,10 @@ function RedefinirSenha() {
     const inputRef5 = useRef(null);
     const inputRef6 = useRef(null);
 
-    function handleCodigoChange(event, nextInputRef, prevInputRef) {
-        // const { value, target, keyCode } = event;
-        // target.value = event.target.value
-        // console.log('Value: ' +value);
-        // console.log('Keycode: ' + keyCode);
-
-        setCodigo({...codigo, [event.target.name]: event.target.value})
+    function handleCodigoChange(event, nextInputRef) {
+        setCodigo({ ...codigo, [event.target.name]: event.target.value })
         console.log(codigo);
-
-        // const keyName = keycode(keyCode);
-        
-        // const isDeleteKeyPressed = keyName === 'Delete' || keyName === 'Backspace';
-        // console.log(isDeleteKeyPressed);
-
-        // if (isDeleteKeyPressed ) {
-        //     prevInputRef.current.focus()
-        // } else {
-            nextInputRef.current.focus()
-        // }
-
-        // console.log(event.keycode);
+        nextInputRef.current.focus()
     }
 
     function handleSenha(e) {

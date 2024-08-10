@@ -19,12 +19,16 @@ function ProcurarCarona() {
     let local = useLocation();
     const navigate = useNavigate();
 
+    // const generoUser = localStorage.getItem('generoUser')
+    const generoUser = "FEMININO";
+
     const [viagemAPesquisar, setViagemAPesquisar] = useState({
         latitudePartida: '',
         longitudePartida: '',
         latitudeDestino: '',
         longitudeDestino: '',
         diaViagem: '',
+        soMulheres: false
     });
 
     const [viagensEncontradas, setViagensEncontradas] = useState([
@@ -127,7 +131,7 @@ function ProcurarCarona() {
                     {
                         viagensEncontradas.length > 0 &&
                         <div className={styles["filtros"]}>
-                            <div className={styles["box-filtro"]}>
+                            <div className={styles["box-filtro"]}style={{width: '22%'}}>
                                 <span>Ordenar por</span>
                                 <select name="ordenarPor" id="ordenar" className={styles["box-select"]} >
                                     <option value="proximidade">Proximidade</option>
@@ -136,7 +140,7 @@ function ProcurarCarona() {
                                 </select>
                             </div>
 
-                            <div className={styles["box-filtro"]}>
+                            <div className={styles["box-filtro"]}style={{width: '22%'}}>
                                 <span>Passageiros</span>
                                 <select name="qtdPassageiros" id="qtd-passageiros" className={styles["box-select"]} >
                                     <option value="1">1</option>
@@ -146,13 +150,20 @@ function ProcurarCarona() {
                                 </select>
                             </div>
 
-                            <div className={styles["box-filtro"]}>
-                                <span>Apenas mulheres</span>
-                                <select name="apenasMulheres" id="apenas-mulheres" className={styles["box-select"]} >
-                                    <option value={true}>Sim</option>
-                                    <option value={false}>Não</option>
-                                </select>
-                            </div>
+                            {
+                                generoUser === "FEMININO" &&
+                                <div className={styles["box-filtro"]} style={{width: '15%'}}>
+                                    <span>Apenas mulheres</span>
+
+                                    <div
+                                        className={viagemAPesquisar.soMulheres ? `${styles["toggle-button"]} ${styles["ativado"]}` : styles["toggle-button"]}
+                                        onClick={() => setViagemAPesquisar({ ...viagemAPesquisar, soMulheres: !viagemAPesquisar.soMulheres })}
+                                    >
+                                        <input type="checkbox" name="soMulheres" value={viagemAPesquisar.soMulheres} />
+                                    </div>
+                                </div>
+                            }
+
                         </div>
                     }
 
@@ -168,7 +179,7 @@ function ProcurarCarona() {
                                         <CardViagem
                                             key={viagem.idViagem}
                                             nomeUser={viagem.nomeMotorista}
-                                            notaUser={(viagem.quantidadeEstrelas > 0 && viagem.quantidadeEstrelas != null) ? viagem.quantidadeEstrelas : '--' }
+                                            notaUser={(viagem.quantidadeEstrelas > 0 && viagem.quantidadeEstrelas != null) ? viagem.quantidadeEstrelas : '--'}
                                             preco={viagem.valor}
                                             fotoUser={viagem.foto ? viagem.foto : imgUser}
                                             horarioPartida={viagem.inicioViagem}
