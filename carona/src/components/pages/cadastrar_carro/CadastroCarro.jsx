@@ -107,8 +107,8 @@ const CadastroCarro = () => {
             </div>
 
             <div className={styles["carros"]}>
-              <CardCarro nomeCarro="Fiat Mobi" placa={"DDR7F99"} />
-              <CardCarro nomeCarro="Fiat Mobi" placa={"DDR7F99"} />
+              {/* <CardCarro nomeCarro="Fiat Mobi" placa={"DDR7F99"} />
+              <CardCarro nomeCarro="Fiat Mobi" placa={"DDR7F99"} /> */}
             </div>
           </div>
           {showForm && (
