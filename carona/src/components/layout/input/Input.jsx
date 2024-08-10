@@ -16,6 +16,7 @@ function Input(props) {
           value={props.value}
           disabled={props.disabled}
           onKeyPress={props.onKeyPress}
+          onInput={props.onInputEvent}
         />
 
         <div className={styles["div-icon"]} onClick={props.iconHandleEvent}>

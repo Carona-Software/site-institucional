@@ -13,7 +13,8 @@ import { FaCar } from "react-icons/fa";
 import AnimacaoEstrada from '../../layout/animacao_estrada/AnimacaoEstrada';
 import CardPassageiro from './card_passageiro/CardPassageiro';
 import MapGeolocation from '../../map/MapGeolocation';
-import axios from 'axios';
+import imgUser from '../../../utils/assets/user-image.png'
+
 
 
 function convertMinutesToHours(minutes) {
@@ -29,7 +30,7 @@ function convertMinutesToHours(minutes) {
 
 function DetalhesViagem() {
 
-    const idViagem = getViagemIdFromUrl();
+    const { idViagem } = useParams();
     const [nome, setNome] = useState("");
     const [mediaEstrelas, setMediaEstrelas] = useState("");
     const [horarioPartida, setHorarioPartida] = useState("");
@@ -38,29 +39,16 @@ function DetalhesViagem() {
     const [modeloCarro, setModeloCarro] = useState("");
     const [marcaCarro, setMarca] = useState("");
     const [placa, setPlaca] = useState("")
-    const [latitudePontoPartida, setLatitudePontoPartida] = useState('')
-    const [longitudePontoPartida, setLongitudePontoPartida] = useState('')
-    const [latitudePontoDestino, setLatitudePontoDestino] = useState('')
-    const [longitudePontoDestino, setLongitudePontoDestino] = useState('')
-
-    function getViagemIdFromUrl() {
-        const url = window.location.href;
-        const regex = /\/viagens\/detalhes\/(\d+)/;
-        const match = url.match(regex);
-        if (match) {
-            return match[1];
-        } else {
-            return null;
-        }
-    }
-
-    // Extrai o ID da viagem ao montar o componente
+    const [latitudePontoPartida, setLatitudePontoPartida] = useState(-23.6323164)
+    const [longitudePontoPartida, setLongitudePontoPartida] = useState(-46.5831203)
+    const [latitudePontoDestino, setLatitudePontoDestino] = useState(-23.6323164)
+    const [longitudePontoDestino, setLongitudePontoDestino] = useState(-46.60)
 
     useEffect(() => {
         const fetchViagem = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/viagem/detalhesViagens/${idViagem}`);
-                console.log("Resposta do back " + JSON.stringify(response))
+                const response = await api.get(`/viagem/detalhesViagens/${idViagem}`);
+                console.log("Resposta: " + JSON.stringify(response))
                 setNome(response.data.nomeMotorista)
                 setMediaEstrelas(response.data.quantidadeEstrelas);
                 setHorarioPartida(response.data.inicioViagem);
@@ -101,16 +89,16 @@ function DetalhesViagem() {
 
                         <div className={styles["box-input"]}>
                             <LuCircleDashed />
-                            <input value={`${viagem.enderecoPartida.cidade}, ${viagem.enderecoPartida.uf}`} name="cidadeOrigem" id="partidaId" className={styles["inputPartida"]} disabled />
+                            <input value={`${'cidade'}`} name="cidadeOrigem" id="partidaId" className={styles["inputPartida"]} disabled />
                         </div>
                         <FaArrowRightLong className={styles["arrow"]} />
                         <div className={styles["box-input"]}>
                             <FaDotCircle />
-                            <input value={`${viagem.enderecoDestino.cidade}, ${viagem.enderecoDestino.uf}`} name="cidadeDestino" id="chegadaId" className={styles["inputChegada"]} disabled />
+                            <input value={`${'cidade'}`} name="cidadeDestino" id="chegadaId" className={styles["inputChegada"]} disabled />
                         </div>
                         <div className={styles["box-input-date"]}>
                             <FaCalendarDays />
-                            <input value={viagem.data} name="data" className={styles["inputDate"]} id="dateId" disabled />
+                            <input value={'dd/mm/aaaa'} name="data" className={styles["inputDate"]} id="dateId" disabled />
                         </div>
 
                         <button className={styles["reservar-button"]} onClick={reservarViagem}>Reservar</button>
@@ -140,8 +128,8 @@ function DetalhesViagem() {
                                     <span className={styles["hora-definida"]}>{fimViagem}h</span>
                                 </div>
                                 <div className={styles["enderecos"]}>
-                                    <span>{viagem.enderecoDestino.logradouro}, {viagem.enderecoDestino.numero}</span>
-                                    <span>{viagem.enderecoPartida.logradouro}, {viagem.enderecoPartida.numero}</span>
+                                    <span>{'aaaaaaaa'}, {'bbbbbbbbbbb'}</span>
+                                    <span>{'aaaaaaaa'}, {'bbbbbbbbbbb'}</span>
                                 </div>
                             </div>
 
@@ -149,7 +137,7 @@ function DetalhesViagem() {
 
                             <div className={styles["info-carro"]}>
                                 <div className={styles["modelo-carro"]}>
-                                    <FaCar style={{ color: viagem.carro.cor }} />
+                                    <FaCar style={{ color: "#173e6d" }} />
                                     <span>{marcaCarro} {modeloCarro}</span>
                                 </div>
                                 <div className={styles["placa-carro"]}>
@@ -163,13 +151,18 @@ function DetalhesViagem() {
                             <div className={styles["passageiros"]}>
                                 <h5>Passageiros</h5>
                                 <div className={styles["users"]}>
-                                    {
+                                    {/* {
                                         viagem.passageiros.length > 0
-                                            ? viagem.passageiros.map(passageiro => (
-                                                <CardPassageiro key={passageiro.id} foto={passageiro.foto} nome={passageiro.nome} nota={passageiro.nota} />
-                                            ))
+                                            ? viagem.passageiros.map((passageiro, index) => ( */}
+                                                <CardPassageiro
+                                                    key={1}
+                                                    foto={imgUser}
+                                                    nome={'Lucas Oliveira'}
+                                                    nota={'--'}
+                                                />
+                                            {/* ))
                                             : <p>Nenhum passageiro reservou esta viagem até o momento</p>
-                                    }
+                                    } */}
                                 </div>
                             </div>
 

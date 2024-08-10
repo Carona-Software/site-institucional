@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import Sidebar from "../../layout/sidebar/Sidebar"
 import styles from './OferecerCarona.module.css'
-import { FaCar, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -24,13 +24,7 @@ function OferecerCarona() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [carrosUser, setCarrosUser] = useState([
-    {
-      id: 1,
-      marca: "Ford",
-      modelo: "Ka",
-    },
-  ]);
+  const [carrosUser, setCarrosUser] = useState([]);
 
   useEffect(() => {
     api
@@ -41,6 +35,12 @@ function OferecerCarona() {
       })
       .catch((error) => console.log(error));
   }, [idUser]);
+  
+    // dataHora pré formatação para post
+    const [dataHora, setDataHora] = useState({
+      data: "",
+      hora: "",
+    });
 
   // gerar horas para combo box a partir da hora atual
   function gerarHorarioComboBox() {
@@ -74,12 +74,6 @@ function OferecerCarona() {
 
   const horariosComboBox = gerarHorarioComboBox();
 
-  // dataHora pré formatação para post
-  const [dataHora, setDataHora] = useState({
-    data: "",
-    hora: "",
-  });
-
   const [viagem, setViagem] = useState({
     idMotorista: idUser,
     latitudePartida: "",
@@ -87,20 +81,11 @@ function OferecerCarona() {
     latitudeDestino: "",
     longitudeDestino: "",
     horario: "",
-    idCarro: carrosUser[0].id,
+    idCarro: '',
     valor: "",
     qntPassageiros: 1,
     soMulheres: false,
   });
-
-  // useEffect(() => {
-  //     api.get(`/listar-carros/${idUser}`)
-  //         .then(res => {
-  //             console.log(res.data);
-  //             setCarrosUser(res.data)
-  //         })
-  //         .catch(error => console.log(error))
-  // }, [idUser])
 
   const handleViagemSave = async () => {
     if (
@@ -250,7 +235,7 @@ function OferecerCarona() {
                                 </div>
 
                                 {
-                                    generoUser == "FEMININO" &&
+                                    generoUser === "FEMININO" &&
                                     <div className={styles["box-input"]} style={{ width: "44%" }}>
                                         <h4>Apenas mulheres</h4>
 

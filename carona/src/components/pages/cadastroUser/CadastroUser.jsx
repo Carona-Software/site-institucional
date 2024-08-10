@@ -1,31 +1,55 @@
 import styles from "./CadastroUser.module.css";
-import Container from "../../layout/container/Container";
 import { useEffect, useState } from "react";
 import Input from "../../layout/input/Input";
-import { BsFillPencilFill } from "react-icons/bs";
-import axios from "axios";
-import InputMask from "react-input-mask";
+import { FaCamera, FaCheck, FaRegCircle, FaUser } from "react-icons/fa";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
-function CadastroUser({ handleUserEvent }) {
-  const [progress, setProgress] = useState(99.9);
-  const [image, setImage] = useState("");
-  const [senha, setSenha] = useState("");
+function CadastroUser({ handleUserEvent, userPessoalData }) {
+  const [hasMaiuscula, setHasMaiuscula] = useState(false)
+  const [hasMinuscula, setHasMinuscula] = useState(false)
+  const [hasNumero, setHasNumero] = useState(false)
+  const [hasEspecial, setHasEspecial] = useState(false)
+
+  const [showPassword, setShowPassword] = useState(false)
+  const [showPasswordConfirmacao, setShowPasswordConfirmacao] = useState(false)
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://widget.cloudinary.com/v2.0/global/all.js";
     script.async = true;
     script.onload = () => {
-      console.log("Cloudinary widget carregou");
+      // console.log("Cloudinary widget carregou");
     };
     document.body.appendChild(script);
   }, []);
 
+  useEffect(() => {
+    validarSenha(userPessoalData.senha)
+  }, [])
+
   const handleSenhaChange = (event) => {
-    const newSenha = event.target.value;
-    setSenha(newSenha);
+    let valorAtual = event.target.value
+    let nomeCampo = event.target.name
+
+    if (nomeCampo === 'senha') {
+      validarSenha(valorAtual)
+    }
+
     handleUserEvent(event);
   };
+
+  function validarSenha(senha) {
+    // Validações de senha
+    let letrasMaiusculas = /[A-Z]/;
+    let letrasMinusculas = /[a-z]/;
+    let numeros = /[0-9]/;
+    let caracteresEspeciais = /[^A-Za-z0-9]/;
+
+    setHasMaiuscula(letrasMaiusculas.test(senha));
+    setHasMinuscula(letrasMinusculas.test(senha));
+    setHasNumero(numeros.test(senha));
+    setHasEspecial(caracteresEspeciais.test(senha));
+  }
 
   const openWidget = () => {
     window.cloudinary
@@ -41,7 +65,6 @@ function CadastroUser({ handleUserEvent }) {
           if (result && result.event === "success") {
             const imageUrl = result.info.secure_url;
             console.log("URL da imagem salva:", imageUrl);
-            setImage(imageUrl);
             handleUserEvent({ target: { name: "imageUrl", value: imageUrl } });
             localStorage.setItem("userProfileImage", imageUrl);
           } else if (error) {
@@ -54,84 +77,87 @@ function CadastroUser({ handleUserEvent }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = {
-      senha: e.target.senha.value,
-      confirmaSenha: e.target["confirma-senha"].value,
-      imageUrl: image,
-    };
-
-    try {
-      const response = await axios.post(
-        "https://localhost:8080/usuarios/cadastrar",
-        formData
-      );
-      console.log(response.data);
-
-      setProgress(99.9);
-    } catch (error) {
-      console.error("Error registering user:", error);
-    }
-  };
-
-  const handleImageChange = (event) => {
-    setImage(URL.createObjectURL(event.target.files[0]));
   };
 
   return (
-    <Container customClass="min-height">
-      {/* div de imagem*/}
+    <div className={styles["div-forms"]}>
+      <h1>Foto e Senha</h1>
+      <form className={styles["forms"]} onSubmit={handleSubmit}>
+        <div className={styles["box-senhas-foto"]}>
+          <div className={styles["box-inputs"]}>
+            <Input
+              label="Senha"
+              type={showPassword ? 'text' : 'password'}
+              icon={showPassword ? <FiEyeOff /> : <FiEye />}
+              iconHandleEvent={() => setShowPassword(!showPassword)}
+              placeholder="*************"
+              name="senha"
+              id="senha"
+              onChangeEvent={handleSenhaChange}
+              value={userPessoalData.senha}
+            />
+            <Input
+              label="Confirmação de senha"
+              type={showPasswordConfirmacao ? 'text' : 'password'}
+              icon={showPasswordConfirmacao ? <FiEyeOff /> : <FiEye />}
+              iconHandleEvent={() => setShowPasswordConfirmacao(!showPasswordConfirmacao)}
+              placeholder="*************"
+              id="confirma-senha"
+              name="confirmacaoSenha"
+              onChangeEvent={handleSenhaChange}
+              value={userPessoalData.confirmacaoSenha}
+            />
+          </div>
 
-      {/* div de forms */}
-      <div className={styles["div-forms"]}>
-        <h1>Foto e Senha</h1>
-        <form className={styles["forms"]} onSubmit={handleSubmit}>
-          <div className={styles["box-senhas-foto"]}>
-            <div className={styles["box-inputs"]}>
-              <Input
-                label="Senha"
-                type="password"
-                placeholder="*************"
-                name="senha"
-                id="senha"
-                onChangeEvent={handleSenhaChange}
-              />
-              <Input
-                label="Confirmação de senha"
-                type="password"
-                placeholder="*************"
-                id="confirma-senha"
-              />
-            </div>
-            <div className={styles["image-box"]}>
-              <div className={styles["circle-input"]} onClick={openWidget}>
-                <input type="file" id="file" style={{ display: "none" }} />
-                {image ? (
+          <div className={styles["image-box"]}>
+            <div className={styles["circle-input"]}>
+              <input type="file" id="file" style={{ display: "none" }} />
+              {userPessoalData.imageUrl ? (
+                <div className={styles["circle-profile-image"]}>
                   <img
-                    src={image}
+                    src={userPessoalData.imageUrl}
                     alt="User profile"
                     className={styles["profile-image"]}
                   />
-                ) : (
-                  <div className={styles["placeholder-image"]}>
-                    {/* <BsFillPencilFill className={styles["pencil-icon"]} /> */}
+                  <div className={styles["circle-camera-button"]} onClick={openWidget}>
+                    <FaCamera className={styles["camera-icon"]} />
                   </div>
-                )}
+                </div>
+              ) : (
+                <div className={styles["placeholder-image"]}>
+                  <FaUser style={{fontSize: "100px", color: "#b7b7b775"}} />
+                  <div className={styles["circle-camera-button"]} onClick={openWidget}>
+                    <FaCamera className={styles["camera-icon"]} />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={styles["validations"]}>
+            <p>A senha deve conter:</p>
+            <div className={styles["box-validators"]}>
+              <div className={hasMaiuscula ? `${styles["validator"]} ${styles["valid"]}` : `${styles["validator"]} ${styles["invalid"]}`}>
+                {hasMaiuscula ? <FaCheck /> : <FaRegCircle />}
+                <span>Letra maiúscula</span>
+              </div>
+              <div className={hasMinuscula ? `${styles["validator"]} ${styles["valid"]}` : `${styles["validator"]} ${styles["invalid"]}`}>
+                {hasMinuscula ? <FaCheck /> : <FaRegCircle />}
+                <span>Letra minúscula</span>
+              </div>
+              <div className={hasNumero ? `${styles["validator"]} ${styles["valid"]}` : `${styles["validator"]} ${styles["invalid"]}`}>
+                {hasNumero ? <FaCheck /> : <FaRegCircle />}
+                <span>Número</span>
+              </div>
+              <div className={hasEspecial ? `${styles["validator"]} ${styles["valid"]}` : `${styles["validator"]} ${styles["invalid"]}`}>
+                {hasEspecial ? <FaCheck /> : <FaRegCircle />}
+                <span>Caracter especial</span>
               </div>
             </div>
           </div>
-          <div className={styles["grupo-progress"]}>
-            <h4>Etapa 3 de 3</h4>
-            <div className={styles["progress-container"]}>
-              <div
-                className={styles["progress-bar"]}
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-    </Container>
+        </div>
+      </form>
+    </div>
   );
 }
 

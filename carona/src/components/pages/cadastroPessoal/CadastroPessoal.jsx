@@ -1,32 +1,22 @@
-import React, { useState } from "react";
-import Container from "../../layout/container/Container";
+import React from "react";
 import styles from "./CadastroPessoal.module.css";
 import Input from "../../layout/input/Input";
-import InputMask from "react-input-mask";
+import { inputSomenteNumero } from "../../../utils/InputValidations";
 
-function CadastroPessoal({ handleUserEvent }) {
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [selectedOptionUser, setSelectedOptionUser] = useState(null);
-  const [progress, setProgress] = useState(33.3);
-
+function CadastroPessoal({ handleUserEvent, userPessoalData }) {
   const handleOptionChange = (option) => {
-    setSelectedOption(option);
     handleUserEvent({ target: { name: "sexo", value: option } });
   };
 
   const handleOptionUserChange = (option) => {
-    setSelectedOptionUser(option);
     handleUserEvent({ target: { name: "perfil", value: option } });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setProgress(100);
   };
 
   return (
-    <Container customClass="min-height">
-      {/* div de forms */}
       <div className={styles["div-forms"]}>
         <h1>Dados Pessoais</h1>
         <form className={styles["forms"]} onSubmit={handleSubmit}>
@@ -38,6 +28,7 @@ function CadastroPessoal({ handleUserEvent }) {
               label="Nome"
               id="nome"
               onChangeEvent={handleUserEvent}
+              value={userPessoalData.nome}
             />
 
             <div className={styles["sexo-box-input"]}>
@@ -48,7 +39,7 @@ function CadastroPessoal({ handleUserEvent }) {
                     type="radio"
                     id="masculino"
                     value="masculino"
-                    checked={selectedOption === "masculino"}
+                    checked={userPessoalData.sexo === "masculino"}
                     onChange={() => handleOptionChange("masculino")}
                   />
                   <label htmlFor="masculino">Masculino</label>
@@ -58,7 +49,7 @@ function CadastroPessoal({ handleUserEvent }) {
                     type="radio"
                     id="feminino"
                     value="feminino"
-                    checked={selectedOption === "feminino"}
+                    checked={userPessoalData.sexo === "feminino"}
                     onChange={() => handleOptionChange("feminino")}
                   />
                   <label htmlFor="feminino">Feminino</label>
@@ -68,7 +59,7 @@ function CadastroPessoal({ handleUserEvent }) {
                     type="radio"
                     id="outros"
                     value="outros"
-                    checked={selectedOption === "outros"}
+                    checked={userPessoalData.sexo === "outros"}
                     onChange={() => handleOptionChange("outros")}
                   />
                   <label htmlFor="outros">Outros</label>
@@ -83,6 +74,7 @@ function CadastroPessoal({ handleUserEvent }) {
               label="Email"
               id="email"
               onChangeEvent={handleUserEvent}
+              value={userPessoalData.email}
             />
             
             <Input
@@ -92,12 +84,15 @@ function CadastroPessoal({ handleUserEvent }) {
               label="CPF"
               id="cpf"
               onChangeEvent={handleUserEvent}
+              value={userPessoalData.cpf}
+              onInputEvent={inputSomenteNumero}
             />
 
             <Input
               type="date"
               placeholder="dd/mm/aaaa"
               onChangeEvent={handleUserEvent}
+              value={userPessoalData.dataNascimento}
               name="dataNascimento"
               label="Data de Nascimento"
               id="dataNascimento"
@@ -111,37 +106,27 @@ function CadastroPessoal({ handleUserEvent }) {
                     type="radio"
                     id="motorista"
                     value="motorista"
-                    checked={selectedOptionUser === "motorista"}
+                    checked={userPessoalData.perfil === "motorista"}
                     onChange={() => handleOptionUserChange("motorista")}
                   />
                   <label htmlFor="motorista">Motorista</label>
                 </div>
+                
                 <div className={styles["custom-radio-option"]}>
                   <input
                     type="radio"
                     id="passageiro"
                     value="passageiro"
-                    checked={selectedOptionUser === "passageiro"}
+                    checked={userPessoalData.perfil === "passageiro"}
                     onChange={() => handleOptionUserChange("passageiro")}
                   />
                   <label htmlFor="passageiro">Passageiro</label>
                 </div>
               </div>
             </div>
-          </div>
-          <div className={styles["grupo-progress"]}>
-            <h4>Etapa 1 de 3</h4>
-            <div className={styles["progress-container"]}>
-              <div
-                className={styles["progress-bar"]}
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-          {/* <ActionButton type="primary" label="Próximo" /> */}
+          </div>          
         </form>
       </div>
-    </Container>
   );
 }
 
