@@ -6,21 +6,22 @@ import { LuCircleDashed } from "react-icons/lu";
 import { FaCalendarDays } from "react-icons/fa6";
 import { FaDotCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import axios from 'axios';
 import AnimacaoEstrada from '../../layout/animacao_estrada/AnimacaoEstrada';
 import SearchGeocode from '../../map/search_geocode/SearchGeocode';
 import CardViagem from './card_viagem/CardViagem';
 import notFound from '../../../utils/assets/image-not-found-viagem.svg';
 import { toast } from "react-toastify";
 import imgUser from '../../../utils/assets/user-image.png'
+import api from '../../../Api';
+import { inputSomenteNumero } from '../../../utils/InputValidations';
 
 
 function ProcurarCarona() {
     let local = useLocation();
     const navigate = useNavigate();
 
-    // const generoUser = localStorage.getItem('generoUser')
-    const generoUser = "FEMININO";
+    const generoUser = localStorage.getItem('generoUser')
+    // const generoUser = "FEMININO";
 
     const [viagemAPesquisar, setViagemAPesquisar] = useState({
         latitudePartida: '',
@@ -50,16 +51,16 @@ function ProcurarCarona() {
         }
     ]);
 
-    const handleCardClick = (viagemId) => {
-        console.log("Valor do id " + viagemId)
-        navigate(`/viagens/detalhes/${viagemId}`);
+    const handleCardClick = (idViagem) => {
+        console.log("Valor do id " + idViagem)
+        navigate(`/viagens/detalhes/${idViagem}`);
     };
 
     const handleSubmitViagem = async () => {
         console.log("Viagem a pesquisar: " + JSON.stringify(viagemAPesquisar));
 
         try {
-            const response = await axios.post('http://localhost:8080/viagem/buscar-viagens', viagemAPesquisar);
+            const response = await api.post('/viagem/buscar-viagens', viagemAPesquisar);
             if (response.data.length > 0) {
                 setViagensEncontradas(response.data);
                 toast.success('Viagens encontradas com sucesso!');
@@ -68,8 +69,7 @@ function ProcurarCarona() {
                 toast.info('Nenhuma viagem encontrada.');
             }
 
-            console.log("ESSE FDP DO CARALHO DEU RESULTADO" + JSON.stringify(response.data));
-            console.log(response.data);
+            console.log('Data: ' + response.data);
             setViagensEncontradas(response.data);
         } catch (error) {
             console.log(error);
@@ -107,8 +107,8 @@ function ProcurarCarona() {
                             className={styles["box-input"]}
                             onClickEvent={(place) => setViagemAPesquisar({
                                 ...viagemAPesquisar,
-                                latitudeDestino: place.geometry.coordinates[1], // Correção de coordenadas
-                                longitudeDestino: place.geometry.coordinates[0] // Correção de coordenadas
+                                latitudeDestino: place.geometry.coordinates[1],
+                                longitudeDestino: place.geometry.coordinates[0]
                             })}
                         />
 
@@ -131,7 +131,7 @@ function ProcurarCarona() {
                     {
                         viagensEncontradas.length > 0 &&
                         <div className={styles["filtros"]}>
-                            <div className={styles["box-filtro"]}style={{width: '22%'}}>
+                            <div className={styles["box-filtro"]} style={{ width: '22%' }}>
                                 <span>Ordenar por</span>
                                 <select name="ordenarPor" id="ordenar" className={styles["box-select"]} >
                                     <option value="proximidade">Proximidade</option>
@@ -140,7 +140,7 @@ function ProcurarCarona() {
                                 </select>
                             </div>
 
-                            <div className={styles["box-filtro"]}style={{width: '22%'}}>
+                            <div className={styles["box-filtro"]} style={{ width: '22%' }}>
                                 <span>Passageiros</span>
                                 <select name="qtdPassageiros" id="qtd-passageiros" className={styles["box-select"]} >
                                     <option value="1">1</option>
@@ -150,9 +150,24 @@ function ProcurarCarona() {
                                 </select>
                             </div>
 
+                            <div className={styles["box-filtro"]} style={{ width: "22%" }}>
+                                <span>Preço máximo</span>
+                                <div className={styles["input-div-preco"]}>
+                                    <span>R$</span>
+                                    <input
+                                        className={styles["input-preco"]}
+                                        type="text"
+                                        name="preco"
+                                        placeholder="00,00"
+                                        // onChange={}
+                                        onInput={inputSomenteNumero}
+                                    />
+                                </div>
+                            </div>
+
                             {
                                 generoUser === "FEMININO" &&
-                                <div className={styles["box-filtro"]} style={{width: '15%'}}>
+                                <div className={styles["box-filtro"]} style={{ width: '15%' }}>
                                     <span>Apenas mulheres</span>
 
                                     <div
@@ -171,13 +186,11 @@ function ProcurarCarona() {
                         viagensEncontradas.length > 0
                             ? <div className={styles["viagens"]}>
                                 {viagensEncontradas.map((viagem) => {
-                                    const horarioPartida = viagem.inicioViagem;
-                                    console.log("Id da viagem " + viagem.idViagem)
-                                    // const horarioChegada = viagem.fimViagem.substring(11, 16);
+                                    console.log("Id da viagem " + viagem.id)
                                     const horarioChegada = viagem.fimViagem
                                     return (
                                         <CardViagem
-                                            key={viagem.idViagem}
+                                            key={viagem.id}
                                             nomeUser={viagem.nomeMotorista}
                                             notaUser={(viagem.quantidadeEstrelas > 0 && viagem.quantidadeEstrelas != null) ? viagem.quantidadeEstrelas : '--'}
                                             preco={viagem.valor}
@@ -186,6 +199,7 @@ function ProcurarCarona() {
                                             horarioChegada={horarioChegada}
                                             distanciaPartida={viagem.distanciaPontoPartidaViagem}
                                             distanciaDestino={viagem.distanciaPontoDestinoViagem}
+                                            onClickEvent={() => handleCardClick(viagem.id)}
                                         />
                                     );
                                 })}

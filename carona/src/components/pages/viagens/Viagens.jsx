@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import Sidebar from "../../layout/sidebar/Sidebar"
 import styles from './Viagens.module.css'
 import CardProximaViagem from './card_proxima_viagem/CardProximaViagem'
@@ -8,6 +8,7 @@ import notFound from '../../../utils/assets/image-not-found-viagem.svg'
 import api from "../../../Api"
 
 function Viagens() {
+    const navigate = useNavigate()
     const { idUser } = useParams()
 
     const [viagens, setViagens] = useState([{
@@ -27,7 +28,7 @@ function Viagens() {
                 console.log(res);
                 setViagens(res.data)
                 viagens.forEach(viagem => {
-                    if (viagem.status == 'PENDENTE') {
+                    if (viagem.status == 'PENDENTE' || viagem.status == 'EM ANDAMENTO') {
                         setViagemPendente(viagem)
                     }
                 });
@@ -51,8 +52,8 @@ function Viagens() {
         // }, [idUser])
     }
 
-    const handleDetalhesViagem = (id) => {
-
+    const handleDetalhesViagem = (idViagem) => {
+        navigate(`/viagens/detalhes/${idViagem}`)
     }
 
     const handleCancelarViagem = (id) => {
@@ -69,12 +70,22 @@ function Viagens() {
                         viagemPendente &&
                         <div className={styles["container-proxima-viagem"]}>
                             <div className={styles["header-proxima-viagem"]}>
-                                <h3>Próxima viagem</h3>
-                                <div className={styles["alerta-viagem"]}>
-                                    <div className={styles["alerta-viagem-circle"]}></div>
+                                {viagemPendente.status == 'PENDENTE' ?
+                                    <h3>Próxima viagem</h3>
+                                    :
+                                    <h3>Viagem em andamento</h3>
+                                }
+                                <div className={viagemPendente.status == 'PENDENTE' ? `${styles["alerta-viagem"]} ${styles["pendente"]}` : `${styles["alerta-viagem"]} ${styles["em-andamento"]}`}>
+                                    <div className={viagemPendente.status == 'PENDENTE' ? `${styles["alerta-viagem-circle"]} ${styles["circle-pendente"]}` : `${styles["alerta-viagem-circle"]} ${styles["circle-em-andamento"]}`}></div>
                                 </div>
                             </div>
-                            <CardProximaViagem cidadeOrigem='São Paulo, SP' cidadeDestino={'Campinas, SP'} valor={36} data='17/05/2024' onDetalhesClick={() => handleDetalhesViagem(viagemPendente.id)} onCancelarClick={() => handleCancelarViagem(viagemPendente.id)} />
+                            <CardProximaViagem
+                                cidadeOrigem='São Paulo, SP'
+                                cidadeDestino={'Campinas, SP'}
+                                valor={36}
+                                data='17/05/2024'
+                                onDetalhesClick={() => handleDetalhesViagem(viagemPendente.id)} onCancelarClick={() => handleCancelarViagem(viagemPendente.id)}
+                            />
                         </div>
                     }
 
@@ -100,7 +111,14 @@ function Viagens() {
                         {viagens.length > 0 ?
                             viagens.map(viagem => (
                                 <div className={styles["historico-viagens"]}>
-                                    <CardViagemFeita key={viagem.id} cidadeOrigem={viagem.cidadeOrigem} cidadeDestino={viagem.cidadeDestino} valor={viagem.preco} data={viagem.dataHora} onDetalhesClick={() => handleDetalhesViagem(viagem.id)} />
+                                    <CardViagemFeita
+                                        key={viagem.id}
+                                        cidadeOrigem={viagem.cidadeOrigem}
+                                        cidadeDestino={viagem.cidadeDestino}
+                                        valor={viagem.preco}
+                                        data={viagem.dataHora}
+                                        onDetalhesClick={() => handleDetalhesViagem(viagem.id)}
+                                    />
                                 </div>
                             ))
                             :

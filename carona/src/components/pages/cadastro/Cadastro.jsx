@@ -5,9 +5,9 @@ import Container from "../../layout/container/Container";
 import img from "../../../utils/assets/cadastro-image.svg";
 import styles from "./Cadastro.module.css";
 import ActionButton from "../../layout/action_button/ActionButton";
-import CadastroPessoal from "../cadastroPessoal/CadastroPessoal";
-import CadastroEndereco from "../cadastroEndereco/CadastroEndereco";
-import CadastroUser from "../cadastroUser/CadastroUser";
+import CadastroPessoal from "./cadastroPessoal/CadastroPessoal";
+import CadastroEndereco from "./cadastroEndereco/CadastroEndereco";
+import CadastroUser from "./cadastroUser/CadastroUser";
 import axios from "axios";
 import api from "../../../Api";
 
@@ -214,32 +214,33 @@ function Cadastro() {
     return pessoalData.imageUrl !== ''
   }
 
+  function setCurrentComponentAndProgressWidth(currentComponent, widthProgressBar) {
+    setCurrentComponent(currentComponent)
+    setWidthProgressBar(widthProgressBar)
+  }
+
   const handleClick = () => {
     if (currentComponent === 1) {
       if (validarDadosPessoais()) {
-        setWidthProgressBar(66)
-        setCurrentComponent(2)
+        setCurrentComponentAndProgressWidth(2, 66)
       }
     } else if (currentComponent === 2) {
       if (validarDadosDeEndereco()) {
-        setWidthProgressBar(100)
-        setCurrentComponent(3)
+        setCurrentComponentAndProgressWidth(3, 100)
       }
     } else {
       if (validarSenhasEFoto()) {
         // cadastrar
-        // cadastrarUsuario();
+        cadastrarUsuario();
       }
     }
   };
 
   const backHandleClick = () => {
     if (currentComponent === 2) {
-      setCurrentComponent(1);
-      setWidthProgressBar(33);
+      setCurrentComponentAndProgressWidth(1, 33)
     } else {
-      setCurrentComponent(2);
-      setWidthProgressBar(66);
+      setCurrentComponentAndProgressWidth(2, 66)
     }
   };
 
@@ -251,13 +252,14 @@ function Cadastro() {
       senha: pessoalData.senha,
       dataNascimento: pessoalData.dataNascimento,
       genero: pessoalData.sexo,
-      tipoUsuario: pessoalData.perfil.toUpperCase(),
-      urlImagemUsuario: pessoalData.imageUrl,
+      perfil: pessoalData.perfil.toUpperCase(),
+      urlFoto: pessoalData.imageUrl,
       endereco: {
         cep: enderecoData.cep,
         logradouro: enderecoData.logradouro,
         cidade: enderecoData.cidade,
         uf: enderecoData.uf.toUpperCase(),
+        bairro: enderecoData.bairro,
         numero: pessoalData.numero,
       },
     };

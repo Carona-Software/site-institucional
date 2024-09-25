@@ -25,7 +25,7 @@ function Home() {
         diaViagem: '',
     });
 
-    const [viagensEncontradas, setViagensEncontradas] = useState(['a']);
+    const [viagensEncontradas, setViagensEncontradas] = useState([]);
 
     const handleSubmitViagem = async () => {
         console.log("Viagem a pesquisar: " + JSON.stringify(viagemAPesquisar));

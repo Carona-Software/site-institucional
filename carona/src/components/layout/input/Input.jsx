@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import styles from "./Input.module.css";
 
 function Input(props) {
@@ -15,7 +14,7 @@ function Input(props) {
           onChange={props.onChangeEvent}
           value={props.value}
           disabled={props.disabled}
-          onKeyPress={props.onKeyPress}
+          onKeyDown={props.onKeyDown}
           onInput={props.onInputEvent}
         />
 
@@ -24,8 +23,8 @@ function Input(props) {
         </div>
       </div>
 
-      {props.linkTo && props.textLink && (
-        <Link to={props.linkTo}>{props.textLink}</Link>
+      {props.textLink && (
+        <span onClick={props.onClickSubText}>{props.textLink}</span>
       )}
     </div>
   );

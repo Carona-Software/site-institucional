@@ -59,4 +59,16 @@
       }
     }
   }
+
+  & span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #173e6d;
+    margin: 4px 0;
+  }
+
+  & span:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
 }

@@ -221,7 +221,10 @@
                 font-weight: 600;
                 box-sizing: border-box;
                 background-color: #E6AD47;
+                color: #fff;
                 transition: all 0.2s;
+                border: none;
+                border-radius: 8px;
             }
 
             & button:hover {
@@ -229,6 +232,7 @@
                 border: px solid #c0903b;
                 background-color: #c0903b;
                 transition: all 0.2s;
+                cursor: pointer;
             }
         }
     }

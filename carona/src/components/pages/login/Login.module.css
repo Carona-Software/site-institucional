@@ -1,6 +1,8 @@
 .login-screen {
     display: flex;
     flex-direction: column;
+    width: 100vw;
+    height: 90vh;
 
     & .voltar {
         display: flex;
@@ -13,12 +15,13 @@
         margin-left: 24px;
         padding-top: 24px;
         box-sizing: border-box;
-        
+
     }
 
     & .voltar:hover {
         cursor: pointer;
     }
+
     & .div-illustration {
         height: 100%;
         width: 50%;
@@ -59,6 +62,7 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                position: relative;
             }
 
             & p {
@@ -72,6 +76,87 @@
             & p:hover {
                 text-decoration: underline;
             }
+
+            & .modal-redefinir-senha {
+                position: absolute;
+                z-index: 2;
+                background-color: #fff;
+                border-radius: 10px;
+                padding: 10px;
+                box-sizing: border-box;
+                box-shadow: rgba(50, 50, 93, 0.169) 0px 13px 27px -5px, rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
+                width: 280px;
+                height: 160px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                position: absolute;
+                top: 8px;
+
+                & span {
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #173E6D;
+                }
+
+                & input {
+                    width: 90%;
+                    height: 15px;
+                    border: 3px solid #173e6d;
+                    border-radius: 8px;
+                    background-color: #fff;
+                    padding: 10px;
+                    font-size: 16px;
+                    color: #173E6D;
+                }
+
+                & button {
+                    background-color: #e6ad47;
+                    color: #fff;
+                    width: 100%;
+                    height: 40px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    border: none;
+                    border-radius: 8px;
+                    display: flex;
+                    text-align: center;
+                    justify-content: center;
+                    align-items: center;
+                    transition: all 0.2s;
+                }
+
+                & button:hover {
+                    cursor: pointer;
+                    color: #f1f1f1;
+                    background-color: #c0903b;
+                    transition: all 0.2s;
+                }
+
+                & .close-button {
+                    position: absolute;
+                    top: -30px;
+                    right: 0px;
+                    background-color: #fff;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    /* padding: 4px; */
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-sizing: border-box;
+                    box-shadow: rgba(50, 50, 93, 0.169) 0px 13px 27px -5px, rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
+                    cursor: pointer;
+
+                    & svg {
+                        font-size: 20px;
+                        color: #7d7d7d;
+                    }
+                }
+            }
         }
     }
+
 }

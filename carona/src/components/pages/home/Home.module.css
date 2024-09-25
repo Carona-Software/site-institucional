@@ -9,6 +9,7 @@
     justify-content: center;
     flex-wrap: wrap;
 }
+
 .imagem {
     margin: 0;
     padding: 0;
@@ -103,8 +104,10 @@
         width: 15%;
         height: 36px;
         font-size: 16px;
+        font-weight: 600;
         background-color: #E6AD47;
         border: 2px solid #E6AD47;
+        border-radius: 8px;
         color: #fff;
         transition: all 0.2s;
         margin: 0;
