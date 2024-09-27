@@ -6,7 +6,6 @@ import { ImProfile } from "react-icons/im";
 import { FaSearch } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { GrTransaction } from "react-icons/gr";
-import { MdOutlineLoyalty } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineAddCircle } from "react-icons/md";
 import { FaCar } from "react-icons/fa";
@@ -54,22 +53,23 @@ function Sidebar({ currentPageName }) {
           <ImProfile />
           <span>Meu perfil</span>
         </li>
-        
+
         <li onClick={() => navigate(`/dashboard/${idUser}`)} className={currentPageName === '/dashboard' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>
           <SiGoogleanalytics />
           <span>Dashboard</span>
         </li>
 
-        {perfilUser === "MOTORISTA" ?
-          <li onClick={() => navigate("/viagens/oferecer")} className={currentPageName === '/viagens/oferecer' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>
-            <MdOutlineAddCircle />
-            <span>Oferecer Carona</span>
-          </li>
-          :
-          <li onClick={() => navigate("/viagens/procurar")} className={currentPageName === '/viagens/procurar' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>
-            <FaSearch />
-            <span>Procurar</span>
-          </li>
+        {
+          perfilUser === "MOTORISTA" ?
+            <li onClick={() => navigate("/viagens/oferecer")} className={currentPageName === '/viagens/oferecer' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>
+              <MdOutlineAddCircle />
+              <span>Oferecer Carona</span>
+            </li>
+            :
+            <li onClick={() => navigate("/viagens/procurar")} className={currentPageName === '/viagens/procurar' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>
+              <FaSearch />
+              <span>Procurar</span>
+            </li>
         }
 
         <li onClick={() => navigate(`/viagens/${idUser}`)} className={currentPageName === '/viagens' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>
@@ -82,13 +82,6 @@ function Sidebar({ currentPageName }) {
           <span>Transações</span>
         </li>
 
-        {
-          perfilUser === 'MOTORISTA' &&
-          <li onClick={() => navigate(`/fidelizados/${idUser}`)} className={currentPageName === '/fidelizados' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>
-            <MdOutlineLoyalty />
-            <span>Fidelizados</span>
-          </li>
-        }
         {
           perfilUser === 'MOTORISTA' &&
           <li onClick={() => navigate(`/carros/${idUser}`)} className={currentPageName === '/carros' ? `${styles["item"]} ${styles["current-page"]}` : styles["item"]}>

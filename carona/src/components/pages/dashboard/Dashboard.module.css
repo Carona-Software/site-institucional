@@ -24,6 +24,238 @@ body {
             width: 100%;
             display: flex;
             text-align: start;
+            margin-bottom: 20px;
+        }
+
+        & .dashboard {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            & .top,
+            .bottom {
+                width: 100%;
+                height: 48%;
+                display: flex;
+                justify-content: space-between;
+                box-sizing: border-box;
+
+                & .left,
+                .right {
+                    height: 100%;
+                    width: 48%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
+
+            }
+
+            & .top {
+                & .left {
+                    & .row-viagens-nota {
+                        display: flex;
+                        width: 100%;
+                        height: 46%;
+                        justify-content: space-between;
+
+                        & .simple-box {
+                            width: 47%;
+                            height: 100%;
+                            background-color: #fff;
+                            border-radius: 10px;
+                            box-shadow: rgba(50, 50, 93, 0.169) 0px 13px 27px -5px, rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
+                            display: flex;
+                            justify-content: space-around;
+                            align-items: center;
+                            box-sizing: border-box;
+                            padding: 12px;
+
+                            & svg {
+                                font-size: 44px;
+                                color: #173e6d;
+                            }
+
+                            & .valor {
+                                height: 100%;
+                                width: 60%;
+                                display: flex;
+                                align-items: center;
+                                flex-direction: column;
+                                justify-content: center;
+                                /* gap: 4px; */
+
+                                & p {
+                                    color: #173e6d;
+                                    font-weight: 600;
+                                    font-size: 32px;
+                                }
+
+                                & span {
+                                    color: #173e6d;
+                                    font-weight: 500;
+                                    font-size: 24px;
+                                    width: 100%;
+                                    text-align: center;
+                                }
+                            }
+                        }
+                    }
+
+                    .row-principal-trajeto {
+                        width: 100%;
+                        height: 46%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        align-items: start;
+                        background-color: #fff;
+                        border-radius: 10px;
+                        box-shadow: rgba(50, 50, 93, 0.169) 0px 13px 27px -5px, rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
+                        box-sizing: border-box;
+                        padding: 12px;
+
+                        & h4 {
+                            color: #173e6d;
+                            font-weight: 600;
+                            font-size: 20px;
+                        }
+
+                        & .trajeto {
+                            width: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 8px;
+
+                            & .cidade-uf {
+                                width: 100%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: start;
+                                gap: 8px;
+
+                                & svg {
+                                    color: #173e6d;
+                                    font-weight: 600;
+                                    font-size: 20px;
+                                }
+
+                                & span {
+                                    color: #173e6d;
+                                    font-weight: 500;
+                                    font-size: 16px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                & .right {
+                    display: flex;
+                    justify-content: space-between;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    box-shadow: rgba(50, 50, 93, 0.169) 0px 13px 27px -5px, rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
+                    box-sizing: border-box;
+                    padding: 12px;
+                    position: relative;
+
+                    & .criterio {
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        position: relative;
+
+                        & svg {
+                            color: #173e6d;
+                            font-weight: 600;
+                            font-size: 28px;
+                        }
+
+                        & span {
+                            color: #173e6d;
+                            font-weight: 600;
+                            font-size: 20px;
+                            margin: 0 8px;
+                        }
+
+                        & .total-nota {
+                            height: 20px;
+                            width: 80%;
+                            background-color: #dfdfdf;
+                            border-radius: 20px;
+
+                            & .nota {
+                                height: 100%;
+                                border-radius: 20px;
+                                background-color: #173e6d;
+                                transition: all ease .2s;
+                            }
+                        }
+                    }
+
+                    & .info {
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        & .description {
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+
+                            & svg {
+                                font-size: 16px;
+                                color: #173e6d;
+                            }
+
+                            & span {
+                                font-size: 12px;
+                                font-weight: 600;
+                                color: #173e6d;
+                            }
+                        }
+                    }
+                }
+            }
+
+            & .bottom {
+                & .left {
+                    & h4 {
+                        color: #173e6d;
+                        font-weight: 600;
+                        font-size: 20px;
+                        margin-bottom: 12px;
+                    }
+
+                    & .avaliacoes {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: start;
+                        overflow-y: auto;
+                        gap: 12px;
+                    }
+                }
+
+                & .right {
+                    & h4 {
+                        color: #173e6d;
+                        font-weight: 600;
+                        font-size: 20px;
+                        margin-bottom: 12px;
+                    }
+
+                    & .fidelizado {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+            }
         }
     }
 }
