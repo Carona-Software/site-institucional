@@ -1,7 +1,7 @@
 import styles from './CardViagemFeita.module.css'
 import image from '../../../../utils/assets/image-viagem-passada.svg'
-import { LuCircleDashed } from "react-icons/lu";
-import { FaRegCircle } from "react-icons/fa";
+import { IoLocationSharp } from "react-icons/io5";
+import { MdMyLocation } from "react-icons/md";
 
 function CardViagemFeita({ cidadeOrigem, cidadeDestino, valor, data, onDetalhesClick }) {
     return (
@@ -14,12 +14,12 @@ function CardViagemFeita({ cidadeOrigem, cidadeDestino, valor, data, onDetalhesC
 
             <div className={styles["viagem-info"]}>
                 <div className={styles["cidade-info"]}>
-                    <LuCircleDashed />
+                    <MdMyLocation />
                     <span id="cidade-origem">{cidadeOrigem}</span>
                 </div>
                 
                 <div className={styles["cidade-info"]}>
-                    <FaRegCircle />
+                    <IoLocationSharp />
                     <span id="cidade-destino">{cidadeDestino}</span>
                 </div>
 

@@ -94,15 +94,7 @@ function EditForm({
                 </div>
                 <div className={styles["info"]}>
                     <h4>CPF</h4>
-                    <input
-                        className={styles["input"]}
-                        maxLength={11}
-                        type="text"
-                        value={userData.cpf}
-                        name='cpf'
-                        onChange={onChangeEvent}
-                        onInput={inputSomenteNumero}
-                    />
+                    <span>{userData.cpf}</span>
                 </div>
                 <div className={styles["info"]}>
                     <h4>Data de Nascimento</h4>
