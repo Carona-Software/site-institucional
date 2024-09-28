@@ -6,9 +6,9 @@ function ViewForm({ userData, onPasswordClick }) {
         <>
             <div className={styles["image-box"]}>
                 {
-                    userData.urlFoto ?
+                    userData.fotoUrl ?
                         (
-                            <img src={userData.urlFoto} alt={`Foto de ${userData.nome}`} />
+                            <img src={userData.fotoUrl} alt={`Foto de ${userData.nome}`} />
                         ) : (
                             <img src={imgUser} alt={`User`} />
                         )

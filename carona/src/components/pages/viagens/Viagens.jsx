@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import notFound from '../../../utils/assets/image-not-found-viagem.svg'
 import api from "../../../Api"
 
+
 function Viagens() {
     const navigate = useNavigate()
     const { idUser } = useParams()
@@ -22,19 +23,27 @@ function Viagens() {
 
     const [viagemPendente, setViagemPendente] = useState({})
 
+    const getViagensUser = async () => {
+        try {
+            const response = await api.get(`/viagens/${idUser}`)
+
+            response.data.forEach(viagem => {
+                if (viagem.status.toLocaleUpperCase() === 'PENDENTE' || viagem.status.toUpperCase() === 'EM ANDAMENTO') {
+                    setViagemPendente(viagem)
+                }
+            });
+
+            const viagensFiltradas = response.data.filter(viagem => viagem !== viagemPendente.id)
+            setViagens(viagensFiltradas)
+        } catch (error) {
+            console.log('Não foi possível buscar as viagens.');
+            console.log('Erro: ', error);
+        }
+    }
+
     useEffect(() => {
-        api.get(`/viagens/${idUser}`)
-            .then(res => {
-                console.log(res);
-                setViagens(res.data)
-                viagens.forEach(viagem => {
-                    if (viagem.status == 'PENDENTE' || viagem.status == 'EM ANDAMENTO') {
-                        setViagemPendente(viagem)
-                    }
-                });
-            })
-            .catch(error => console.log(error))
-    }, [idUser, viagens])
+        getViagensUser()
+    }, [])
 
     function filtrarViagens() {
         // useEffect(() => {
@@ -56,9 +65,7 @@ function Viagens() {
         navigate(`/viagens/detalhes/${idViagem}`)
     }
 
-    const handleCancelarViagem = (id) => {
-
-    }
+    const handleCancelarViagem = (id) => {}
 
     return (
         <>
@@ -70,13 +77,13 @@ function Viagens() {
                         viagemPendente &&
                         <div className={styles["container-proxima-viagem"]}>
                             <div className={styles["header-proxima-viagem"]}>
-                                {viagemPendente.status == 'PENDENTE' ?
+                                {viagemPendente.status === 'PENDENTE' ?
                                     <h3>Próxima viagem</h3>
                                     :
                                     <h3>Viagem em andamento</h3>
                                 }
-                                <div className={viagemPendente.status == 'PENDENTE' ? `${styles["alerta-viagem"]} ${styles["pendente"]}` : `${styles["alerta-viagem"]} ${styles["em-andamento"]}`}>
-                                    <div className={viagemPendente.status == 'PENDENTE' ? `${styles["alerta-viagem-circle"]} ${styles["circle-pendente"]}` : `${styles["alerta-viagem-circle"]} ${styles["circle-em-andamento"]}`}></div>
+                                <div className={viagemPendente.status === 'PENDENTE' ? `${styles["alerta-viagem"]} ${styles["pendente"]}` : `${styles["alerta-viagem"]} ${styles["em-andamento"]}`}>
+                                    <div className={viagemPendente.status === 'PENDENTE' ? `${styles["alerta-viagem-circle"]} ${styles["circle-pendente"]}` : `${styles["alerta-viagem-circle"]} ${styles["circle-em-andamento"]}`}></div>
                                 </div>
                             </div>
                             <CardProximaViagem
@@ -109,14 +116,14 @@ function Viagens() {
                         </div>
 
                         {viagens.length > 0 ?
-                            viagens.map(viagem => (
+                            viagens.map((viagem, index) => (
                                 <div className={styles["historico-viagens"]}>
                                     <CardViagemFeita
-                                        key={viagem.id}
-                                        cidadeOrigem={viagem.cidadeOrigem}
-                                        cidadeDestino={viagem.cidadeDestino}
+                                        key={index}
+                                        cidadeOrigem={`${viagem.endereco.pontoPartida.cidade}, ${viagem.endereco.pontoPartida.uf}`}
+                                        cidadeDestino={`${viagem.endereco.pontoChegada.cidade}, ${viagem.endereco.pontoPartida.uf}`}
                                         valor={viagem.preco}
-                                        data={viagem.dataHora}
+                                        data={`${viagem.data} - ${viagem.horarioSaida}`}
                                         onDetalhesClick={() => handleDetalhesViagem(viagem.id)}
                                     />
                                 </div>
