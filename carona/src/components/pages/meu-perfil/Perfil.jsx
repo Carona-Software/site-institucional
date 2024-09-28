@@ -12,30 +12,34 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 
 function Perfil() {
   let local = useLocation();
+  const idUser = sessionStorage.getItem("idUser");
+
   const [isOnEditForm, setIsOnEditForm] = useState(false);
   const [isOnEditPassword, setIsOnEditPassword] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [codigoFoiEnviado, setCodigoFoiEnviado] = useState(false)
   const [codigoSenha, setCodigoSenha] = useState()
-  const [userData, setUserData] = useState({
-    nome: 'Gustavo Medeiros Silva',
-    cpf: '123.456.789-00',
-    email: 'gustavo@email.com',
-    senha: 'Gug4med$',
-    dataNascimento: '2003/06/10',
-    genero: 'Masculino',
-    perfil: 'Passageiro',
-    urlFoto: '',
-    endereco: {
-      cep: '04244000',
-      logradouro: 'Estrada das Lágrimas',
-      cidade: 'São Paulo',
-      uf: 'SP',
-      bairro: 'São João Clímaco',
-      numero: '3621',
-    }
-  })
+  // const [userData, setUserData] = useState({
+  //   nome: 'Gustavo Medeiros Silva',
+  //   cpf: '123.456.789-00',
+  //   email: 'gustavo@email.com',
+  //   senha: 'Gug4med$',
+  //   dataNascimento: '2003/06/10',
+  //   genero: 'Masculino',
+  //   perfil: 'Passageiro',
+  //   fotoUrl: '',
+  //   endereco: {
+  //     cep: '04244000',
+  //     logradouro: 'Estrada das Lágrimas',
+  //     cidade: 'São Paulo',
+  //     uf: 'SP',
+  //     bairro: 'São João Clímaco',
+  //     numero: '3621',
+  //   }
+  // })
+
+  const [userData, setUserData] = useState({})
 
   const [userEditData, setUserEditData] = useState({
     nome: userData.nome,
@@ -45,7 +49,7 @@ function Perfil() {
     dataNascimento: userData.dataNascimento,
     genero: userData.genero,
     perfil: userData.perfil,
-    urlFoto: userData.urlFoto,
+    fotoUrl: userData.fotoUrl,
     endereco: {
       cep: userData.endereco.cep,
       logradouro: userData.endereco.logradouro,
@@ -56,27 +60,19 @@ function Perfil() {
     }
   })
 
-  const getDetalhesUser = async () => {
+  const getUserInfo = async () => {
     try {
-      const userId = sessionStorage.getItem("idUsuario");
-
-      if (!userId) {
-        console.log("idUsuario não encontrado em sessionStorage");
-        return;
-      }
-
-      const response = await api.get(`/usuarios/${userId}`)
-
-      let dataNascimento = response.data.dataNascimento.split("-").reverse().join("-");
+      const response = await api.get(`/usuarios/${idUser}`)
+      setUserData(response.data)
       setUserData({
         nome: response.data.nome,
         cpf: response.data.cpf,
         email: response.data.email,
         senha: response.data.senha,
-        dataNascimento: dataNascimento,
+        dataNascimento: response.data.dataNascimento,
         genero: response.data.genero,
         perfil: response.data.perfil,
-        urlFoto: response.data.urlFoto,
+        fotoUrl: response.data.fotoUrl,
         endereco: {
           cep: response.data.endereco.cep,
           logradouro: response.data.endereco.logradouro,
@@ -86,13 +82,14 @@ function Perfil() {
           numero: response.data.endereco.numero,
         }
       })
+
     } catch (error) {
       console.log("Erro ao obter informações do usuário: ", error);
     }
-  };
+  }
 
   useEffect(() => {
-    getDetalhesUser();
+    getUserInfo();
   }, []);
 
   const handleCancelEdit = () => {
@@ -141,9 +138,16 @@ function Perfil() {
     setUserEditData({ ...userEditData, endereco: { [e.target.name]: e.target.value } })
   }
 
-  const handleSaveChanges = () => {
-    setIsOnEditForm(false)
-
+  const handleSaveChanges = async () => {
+    try {
+      const response = await api.put(`/usuarios/${idUser}`, userEditData)
+      setUserData(response.data)
+      setIsOnEditForm(false)
+      toast.success("Dados atualizados com sucesso")
+    } catch (error) {
+      console.log("Erro ao atualizar informações do usuário: ", error);
+      toast.error("Não foi possível atualizar os dados")
+    }
   }
 
   const handleAlterarSenha = () => {

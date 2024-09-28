@@ -2,9 +2,9 @@ import styles from './DetalhesViagem.module.css'
 import { useParams } from "react-router-dom";
 import Sidebar from "../../layout/sidebar/Sidebar"
 import { FaArrowRightLong } from "react-icons/fa6";
-import { LuCircleDashed } from "react-icons/lu";
+import { IoLocationSharp } from "react-icons/io5";
+import { MdMyLocation } from "react-icons/md";
 import { FaCalendarDays } from "react-icons/fa6";
-import { FaDotCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import api from '../../../Api'
 import { FaStar } from "react-icons/fa";
@@ -14,8 +14,6 @@ import AnimacaoEstrada from '../../layout/animacao_estrada/AnimacaoEstrada';
 import CardPassageiro from './card_passageiro/CardPassageiro';
 import MapGeolocation from '../../map/MapGeolocation';
 import imgUser from '../../../utils/assets/user-image.png'
-
-
 
 function convertMinutesToHours(minutes) {
     if (minutes < 60) {
@@ -27,51 +25,118 @@ function convertMinutesToHours(minutes) {
     }
 }
 
-
 function DetalhesViagem() {
-
     const { idViagem } = useParams();
-    const [nome, setNome] = useState("");
-    const [mediaEstrelas, setMediaEstrelas] = useState("");
-    const [horarioPartida, setHorarioPartida] = useState("");
-    const [fimViagem, setFimViagem] = useState("");
-    const [tempoMedio, setTempoMedio] = useState("");
-    const [modeloCarro, setModeloCarro] = useState("");
-    const [marcaCarro, setMarca] = useState("");
-    const [placa, setPlaca] = useState("")
-    const [latitudePontoPartida, setLatitudePontoPartida] = useState(-23.6323164)
-    const [longitudePontoPartida, setLongitudePontoPartida] = useState(-46.5831203)
-    const [latitudePontoDestino, setLatitudePontoDestino] = useState(-23.6323164)
-    const [longitudePontoDestino, setLongitudePontoDestino] = useState(-46.60)
+
+    const [viagem, setViagem] = useState({
+        id: 1,
+        capacidadePassageiros: 4,
+        apenasMulheres: false,
+        data: "18/03/2024",
+        horarioSaida: "21:00h",
+        horarioChegada: "23:00h",
+        preco: 30.0,
+        status: "Pendente",
+        endereco: {
+            pontoPartida: {
+                latitude: -23.6323164,
+                longitude: -46.5831203,
+                cidade: "São Paulo",
+                uf: "SP",
+                cep: "012345-000",
+                bairro: "Consolação",
+                logradouro: "Rua Haddock Lobo",
+                numero: 300
+            },
+            pontoChegada: {
+                latitude: -23.6323164,
+                longitude: -46.60,
+                cidade: "Campinas",
+                uf: "SP",
+                cep: "19865-030",
+                bairro: "Guarani",
+                logradouro: "Avenida Guarani",
+                numero: 2100
+            },
+        },
+        carro: {
+            marca: "Fiat",
+            modelo: "Mobi",
+            cor: "Branco",
+            placa: "ABC1D23"
+        },
+        motorista: {
+            id: 2,
+            nome: "User Teste 3",
+            fotoUrl: "https://foto.com",
+        },
+        passageiros: [
+            {
+                id: 1,
+                nome: "User Teste 2",
+                fotoUrl: "https://foto.com"
+            }
+        ]
+    });
+    const [corCarro, setCorCarro] = useState();
+
+    const getDetalhesViagem = async () => {
+        try {
+            const response = await api.get(`/viagens/detalhes/${idViagem}`);
+            setViagem(response.data)
+        } catch (error) {
+            console.log('Não foi possível buscar detalhes da viagem.');
+            console.log('Erro: ', error);
+        }
+    }
+
+    const definirCorCarro = () => {
+        switch (viagem.carro.cor) {
+            case 'Preto':
+                setCorCarro('#000000')
+                break;
+            case 'Branco':
+                setCorCarro('#F1F1F1')
+                break;
+            case 'Azul':
+                setCorCarro('#173E6D')
+                break;
+            case 'Verde':
+                setCorCarro('#298039')
+                break;
+            case 'Vermelho':
+                setCorCarro('#D82323')
+                break;
+            case 'Roxo':
+                setCorCarro('#8E32A3')
+                break;
+            case 'Marrom':
+                setCorCarro('#6C501D')
+                break;
+            case 'Laranja':
+                setCorCarro('#E85816')
+                break;
+            case 'Cinza':
+                setCorCarro('#808080')
+                break;
+            case 'Amarelo':
+                setCorCarro('#EDE917')
+                break;
+            case 'Prata':
+                setCorCarro('#C0C0C0')
+                break;
+            case 'Vinho':
+                setCorCarro('#781D1D')
+                break;
+            default:
+                break;
+        }
+    }
 
     useEffect(() => {
-        const fetchViagem = async () => {
-            try {
-                const response = await api.get(`/viagem/detalhesViagens/${idViagem}`);
-                console.log("Resposta: " + JSON.stringify(response))
-                setNome(response.data.nomeMotorista)
-                setMediaEstrelas(response.data.quantidadeEstrelas);
-                setHorarioPartida(response.data.inicioViagem);
-                setFimViagem(response.data.fimViagem);
-                const tempoMedioViagem = convertMinutesToHours(response.data.tempoMedioViagem);
-                setTempoMedio(tempoMedioViagem);
-                setModeloCarro(response.data.nomeCarro)
-                setMarca(response.data.modeloCarro)
-                setPlaca(response.data.placaCarro)
-                setLatitudePontoPartida(response.data.latitudePontoPartida)
-                setLongitudePontoPartida(response.data.longitudePontoPartida)
-                setLatitudePontoDestino(response.data.latitudePontoDestino)
-                setLongitudePontoDestino(response.data.longitudePontoDestino)
-                console.log(nome)
-            } catch (error) {
-                console.error("Erro ao buscar detalhes da viagem:", error);
-            }
-        };
-
-        fetchViagem();
-    }, [idViagem]);
-
-    const [viagem, setViagem] = useState()
+        getDetalhesViagem()
+        definirCorCarro()
+    }, []);
 
     const reservarViagem = () => {
         console.log('');
@@ -88,20 +153,36 @@ function DetalhesViagem() {
                     <div className={styles["search-bar"]}>
 
                         <div className={styles["box-input"]}>
-                            <LuCircleDashed />
-                            <input value={`${'cidade'}`} name="cidadeOrigem" id="partidaId" className={styles["inputPartida"]} disabled />
+                            <MdMyLocation />
+                            <input
+                                value={`${viagem.endereco.pontoPartida.cidade}, ${viagem.endereco.pontoPartida.uf}`}
+                                className={styles["inputPartida"]}
+                                disabled
+                            />
                         </div>
                         <FaArrowRightLong className={styles["arrow"]} />
                         <div className={styles["box-input"]}>
-                            <FaDotCircle />
-                            <input value={`${'cidade'}`} name="cidadeDestino" id="chegadaId" className={styles["inputChegada"]} disabled />
+                            <IoLocationSharp />
+                            <input
+                                value={`${viagem.endereco.pontoPartida.cidade}, ${viagem.endereco.pontoPartida.uf}`}
+                                className={styles["inputChegada"]}
+                                disabled
+                            />
                         </div>
                         <div className={styles["box-input-date"]}>
                             <FaCalendarDays />
-                            <input value={'dd/mm/aaaa'} name="data" className={styles["inputDate"]} id="dateId" disabled />
+                            <input
+                                value={viagem.data}
+                                className={styles["inputDate"]}
+                                disabled
+                            />
                         </div>
 
-                        <button className={styles["reservar-button"]} onClick={reservarViagem}>Reservar</button>
+                        <button
+                            className={styles["reservar-button"]}
+                            onClick={reservarViagem}>
+                            Reservar
+                        </button>
 
                     </div>
 
@@ -109,12 +190,12 @@ function DetalhesViagem() {
                         <div className={styles["info"]}>
 
                             <div className={styles["motorista"]}>
-                                <img src="" alt="Foto do Motorista" />
+                                <img src={viagem.motorista.fotoUrl ? viagem.motorista.fotoUrl : imgUser} alt={viagem.motorista.nome} />
                                 <div className={styles["nome-nota"]}>
-                                    <h4>{nome}</h4>
+                                    <h4>{viagem.motorista.nome}</h4>
                                     <div className={styles["nota"]}>
                                         <FaStar />
-                                        <span>{mediaEstrelas}</span>
+                                        <span>{viagem.motorista.notaGeral ? viagem.motorista.notaGeral : "--"}</span>
                                     </div>
                                 </div>
                             </div>
@@ -123,13 +204,30 @@ function DetalhesViagem() {
 
                             <div className={styles["hora-endereco"]}>
                                 <div className={styles["horarios"]}>
-                                    <span className={styles["hora-definida"]}>{horarioPartida}h</span>
-                                    <span className={styles["tempo-estimado"]}>{tempoMedio}</span>
-                                    <span className={styles["hora-definida"]}>{fimViagem}h</span>
+                                    <span className={styles["hora-definida"]}>{viagem.horarioSaida}h</span>
+                                    <span className={styles["tempo-estimado"]}>{""}</span>
+                                    <span className={styles["hora-definida"]}>{viagem.horarioChegada}h</span>
                                 </div>
                                 <div className={styles["enderecos"]}>
-                                    <span>{'aaaaaaaa'}, {'bbbbbbbbbbb'}</span>
-                                    <span>{'aaaaaaaa'}, {'bbbbbbbbbbb'}</span>
+                                    <span>
+                                        {`
+                                            ${viagem.endereco.pontoPartida.logradouro} - 
+                                            ${viagem.endereco.pontoPartida.cep}, 
+                                            ${viagem.endereco.pontoPartida.bairro}, 
+                                            ${viagem.endereco.pontoPartida.cidade}/
+                                            ${viagem.endereco.pontoPartida.uf}
+                                        `}
+                                    </span>
+
+                                    <span>
+                                        {`
+                                            ${viagem.endereco.pontoChegada.logradouro} - 
+                                            ${viagem.endereco.pontoChegada.cep}, 
+                                            ${viagem.endereco.pontoChegada.bairro}, 
+                                            ${viagem.endereco.pontoChegada.cidade}/
+                                            ${viagem.endereco.pontoChegada.uf}
+                                        `}
+                                    </span>
                                 </div>
                             </div>
 
@@ -137,12 +235,12 @@ function DetalhesViagem() {
 
                             <div className={styles["info-carro"]}>
                                 <div className={styles["modelo-carro"]}>
-                                    <FaCar style={{ color: "#173e6d" }} />
-                                    <span>{marcaCarro} {modeloCarro}</span>
+                                    <FaCar style={{ color: corCarro}} />
+                                    <span>{viagem.carro.marca} {viagem.carro.modelo}</span>
                                 </div>
                                 <div className={styles["placa-carro"]}>
                                     <img src={placaIcon} alt="Ícone de placa" />
-                                    <span>{placa}</span>
+                                    <span>{viagem.carro.placa}</span>
                                 </div>
                             </div>
 
@@ -151,18 +249,18 @@ function DetalhesViagem() {
                             <div className={styles["passageiros"]}>
                                 <h5>Passageiros</h5>
                                 <div className={styles["users"]}>
-                                    {/* {
+                                    {
                                         viagem.passageiros.length > 0
-                                            ? viagem.passageiros.map((passageiro, index) => ( */}
+                                            ? viagem.passageiros.map((passageiro, index) => (
                                                 <CardPassageiro
-                                                    key={1}
-                                                    foto={imgUser}
-                                                    nome={'Lucas Oliveira'}
+                                                    key={index}
+                                                    foto={passageiro.fotoUrl}
+                                                    nome={passageiro.nome}
                                                     nota={'--'}
                                                 />
-                                            {/* ))
+                                            ))
                                             : <p>Nenhum passageiro reservou esta viagem até o momento</p>
-                                    } */}
+                                    }
                                 </div>
                             </div>
 
@@ -170,10 +268,10 @@ function DetalhesViagem() {
 
                         <div className={styles["mapa"]}>
                             <MapGeolocation
-                                latitudePartida={latitudePontoPartida}
-                                longitudePartida={longitudePontoPartida}
-                                latitudeDestino={latitudePontoDestino}
-                                longitudeDestino={longitudePontoDestino}
+                                latitudePartida={viagem.endereco.pontoPartida.latitude}
+                                longitudePartida={viagem.endereco.pontoPartida.longitude}
+                                latitudeDestino={viagem.endereco.pontoChegada.latitude}
+                                longitudeDestino={viagem.endereco.pontoChegada.longitude}
                             />
                         </div>
                     </div>

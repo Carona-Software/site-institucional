@@ -50,9 +50,9 @@ const Carros = () => {
       .catch(error => console.log('Erro ao buscar carros do usuário: ', error))
   }
 
-  // useEffect(() => {
-  //   getCarrosUser();
-  // }, []);
+  useEffect(() => {
+    getCarrosUser();
+  }, []);
 
   const handleOnChange = (e) => {
     if (isEditMode) {

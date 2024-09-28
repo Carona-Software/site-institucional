@@ -35,7 +35,7 @@ function EditForm({
                     if (result && result.event === "success") {
                         const imageUrl = result.info.secure_url;
                         console.log("URL da imagem salva: ", imageUrl);
-                        onChangeEvent({ target: { name: "urlFoto", value: imageUrl } });
+                        onChangeEvent({ target: { name: "fotoUrl", value: imageUrl } });
                     } else if (error) {
                         console.error("Erro ao fazer upload:", error);
                     }
@@ -54,9 +54,9 @@ function EditForm({
         <>
             <div className={styles["image-box"]}>
                 {
-                    userData.urlFoto ?
+                    userData.fotoUrl ?
                         (
-                            <img src={userData.urlFoto} alt={`Foto de ${userData.nome}`} />
+                            <img src={userData.fotoUrl} alt={`Foto de ${userData.nome}`} />
                         ) : (
                             <img src={imgUser} alt={`User`} />
                         )
