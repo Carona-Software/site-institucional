@@ -17,55 +17,10 @@ import api from '../../../Api';
 import { toast } from 'react-toastify';
 
 function Dashboard() {
-    // const perfilUser = sessionStorage.getItem('perfilUser');
-    const perfilUser = 'PASSAGEIRO';
+    const perfilUser = sessionStorage.getItem('perfilUser');
     const idUser = sessionStorage.getItem('idUser');
 
-    const [userData, setUserData] = useState({
-        id: 1,
-        nome: "User Teste",
-        email: "user@email.com",
-        cpf: "11122233344",
-        genero: "Masculino",
-        dataNascimento: "18/03/2004",
-        perfil: "Passageiro",
-        fotoUrl: "https://foto.com",
-        endereco: {
-            latitude: -10.0000,
-            longitude: -10.0000,
-            cidade: "São Paulo",
-            uf: "SP",
-            cep: "012345-000",
-            bairro: "Consolação",
-            logradouro: "Rua Haddock Lobo",
-            numero: 300
-        },
-        viagens: [
-            {
-                id: 1,
-                data: "18/03/2024",
-                horárioSaida: "21:00h",
-                horárioChegada: "23:00h",
-                preco: 30.0,
-                status: "Finalizada"
-            }
-        ],
-        avaliacoes: [
-
-        ],
-        motoristaFidelizado: {
-            id: 2,
-            nome: "User Teste 3",
-            fotoUrl: "https://foto.com",
-            notaGeral: 4.3,
-            qtdViagensJuntos: 6,
-            localidade: "São Paulo, SP" // cidade + uf do endereço
-        },
-        principalTrajeto: {
-            partida: "", // cidade + uf do endereço
-            chegada: "" // cidade + uf do endereço
-        }
-    })
+    const [userData, setUserData] = useState({})
     const [hasMotoristaFidelizado, setHasMotoristaFidelizado] = useState(false)
     const [hasPassageirosFidelizados, setHasPassageirosFidelizados] = useState(false)
 
@@ -99,96 +54,6 @@ function Dashboard() {
     const [notaGeralSeguranca, setNotaGeralSeguranca] = useState(0)
     const [notaGeralComportamento, setNotaGeralComportamento] = useState(0)
     const [notaMedia, setNotaMedia] = useState(0)
-
-    // const userData = {
-    //     id: 1,
-    //     nome: "User Teste",
-    //     email: "user@email.com",
-    //     cpf: "11122233344",
-    //     genero: "Masculino",
-    //     dataNascimento: "18/03/2004",
-    //     perfil: "Motorista",
-    //     fotoUrl: "https://foto.com",
-    //     viagens: [
-    //         {
-    //             id: 1,
-    //             capacidadePassageiros: 4,
-    //             apenasMulheres: false,
-    //             data: "18/03/2024",
-    //             horárioSaida: "21:00h",
-    //             horárioChegada: "23:00h",
-    //             preco: 30.0,
-    //             pontoPartida: {
-    //                 latitude: -10.0000,
-    //                 longitude: -10.0000,
-    //             },
-    //             pontoChegada: {
-    //                 latitude: -10.0000,
-    //                 longitude: -10.0000,
-    //             },
-    //             carro: {
-    //                 nome: "Fiat Mobi",
-    //                 cor: "Preto",
-    //                 placa: "ABC1D23"
-    //             },
-    //             motorista: {
-    //                 id: 2,
-    //                 nome: "User Teste 3",
-    //                 fotoUrl: "https://foto.com"
-    //             },
-    //             passageiros: [
-    //                 {
-    //                     id: 1,
-    //                     nome: "User Teste 2",
-    //                     fotoUrl: "https://foto.com"
-    //                 }
-    //             ]
-    //         }
-    //     ],
-    //     avaliacoes: [
-    //         {
-    //             comentario: 'Dirige bem, pontual e respeitoso! Recomendo!',
-    //             avaliacao: [
-    //                 {
-    //                     criterio: "Comunicação",
-    //                     nota: 4.3
-    //                 },
-    //                 {
-    //                     criterio: "Segurança",
-    //                     nota: 4.3
-    //                 },
-    //                 {
-    //                     criterio: "Comportamento",
-    //                     nota: 4.3
-    //                 },
-    //                 {
-    //                     criterio: "Pontualidade",
-    //                     nota: 1.0
-    //                 },
-    //             ]
-    //         },
-    //         {
-    //             avaliacao: [
-    //                 {
-    //                     criterio: "Comunicação",
-    //                     nota: 3.7
-    //                 },
-    //                 {
-    //                     criterio: "Segurança",
-    //                     nota: 5.0
-    //                 },
-    //                 {
-    //                     criterio: "Comportamento",
-    //                     nota: 2.5
-    //                 },
-    //                 {
-    //                     criterio: "Pontualidade",
-    //                     nota: 2.0
-    //                 },
-    //             ]
-    //         },
-    //     ]
-    // }
 
     const calculateTotalPorcentageCriterio = (media) => {
         return ((media / 5) * 100).toFixed(1)

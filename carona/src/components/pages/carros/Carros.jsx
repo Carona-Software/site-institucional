@@ -11,15 +11,7 @@ import imgSemCarros from '../../../utils/assets/image-not-found-viagem.svg'
 const Carros = () => {
   const idUser = sessionStorage.getItem('idUser')
 
-  const [carrosUser, setCarrosUser] = useState([
-    {
-      id: 1,
-      marca: 'Audi',
-      modelo: 'A4',
-      placa: 'GJB9A06',
-      cor: 'Vermelho'
-    }
-  ])
+  const [carrosUser, setCarrosUser] = useState([])
 
   const [isEditMode, setIsEditMode] = useState(false)
 
@@ -28,6 +20,7 @@ const Carros = () => {
     modelo: "",
     placa: "",
     cor: "",
+    fkUsuario: idUser
   });
 
   const [editCarroData, setEditCarroData] = useState({
@@ -36,6 +29,7 @@ const Carros = () => {
     modelo: "",
     placa: "",
     cor: "",
+    fkUsuario: null
   });
 
   const [marcas, setMarcas] = useState([]);
@@ -43,9 +37,10 @@ const Carros = () => {
   const [showForm, setShowForm] = useState(false);
 
   const getCarrosUser = async () => {
-    await api.get(`/carros/${idUser}`)
+    await api.get(`/carros/usuario/${idUser}`)
       .then((res) => {
-        setCarrosUser(res)
+        console.log(res.data);
+        setCarrosUser(res.data)
       })
       .catch(error => console.log('Erro ao buscar carros do usuário: ', error))
   }
@@ -219,13 +214,13 @@ const Carros = () => {
       modelo: carro.modelo,
       placa: carro.placa,
       cor: carro.cor,
+      fkUsuario: carro.fkUsuario,
     })
     setShowForm(true)
   }
 
   const handleSaveCarro = () => {
     if (validateForm(isEditMode ? editCarroData : novoCarroData)) {
-      setShowForm(false);
       if (isEditMode) {
         handleEditCarro(editCarroData.id)
       } else {
@@ -245,11 +240,13 @@ const Carros = () => {
       .then(() => {
         getCarrosUser()
         toast.success('Carro cadastrado com sucesso')
+        setShowForm(false);
         setNovoCarroData({
           marca: "",
           modelo: "",
           placa: "",
           cor: "",
+          fkUsuario: idUser
         })
       })
       .catch(error => {
@@ -264,6 +261,7 @@ const Carros = () => {
       .then(() => {
         getCarrosUser()
         toast.success('Carro atualizado com sucesso')
+        setShowForm(false);
       })
       .catch(error => {
         console.log('Erro ao atualizar carro: ', error);
@@ -274,6 +272,7 @@ const Carros = () => {
   const handleRemoveCarro = async (idCarro) => {
     await api.delete(`/carros/${idCarro}`)
       .then(() => {
+        getCarrosUser()
         toast.success('Carro removido com sucesso')
       })
       .catch(error => {

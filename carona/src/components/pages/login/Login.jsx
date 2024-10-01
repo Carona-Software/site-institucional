@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../../../Api';
 import { FaArrowLeft } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 function Login() {
   const navigate = useNavigate()
@@ -35,12 +36,17 @@ function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    api.post('/usuario/login', null, { params: user })
+    api.post('/usuarios/login', null, { params: user })
       .then((response) => {
         console.log('Login realizado com sucesso:', response.data);
-        sessionStorage.setItem('idUsuario', response.data.idUsuario);
-        sessionStorage.setItem('urlImagemUsuario', response.data.urlImagemUsuario)
-        obterDetalhesPerfil(response.data.idUsuario);
+        sessionStorage.setItem('idUser', response.data.id)
+        sessionStorage.setItem('generoUser', response.data.genero)
+        sessionStorage.setItem('perfilUser', response.data.perfil)
+        sessionStorage.setItem('nomeUser', response.data.nome)
+        sessionStorage.setItem('notaUser', response.data.nota)
+        sessionStorage.setItem('fotoUser', response.data.foto)
+        toast.success("Login realizado com sucesso")
+        navigate(`/dashboard/${response.data.id}`);
       })
       .catch(error => {
         if (error.response && error.response.status === 401) {
@@ -48,6 +54,7 @@ function Login() {
         } else {
           console.log('Erro ao realizar login:', error);
         }
+        toast.error("Houve um erro ao realizar o login")
       })
       .finally(() => {
         setIsLoading(false);
@@ -55,22 +62,22 @@ function Login() {
   }
 
   // Função para obter os detalhes do perfil
-  const obterDetalhesPerfil = (userId) => {
-    api.get(`/usuario/detalhes/${userId}`)
-      .then((response) => {
-        console.log('Detalhes do perfil obtidos com sucesso:', response.data);
-        sessionStorage.setItem('idUser', response.data.id)
-        sessionStorage.setItem('generoUser', response.data.genero)
-        sessionStorage.setItem('perfilUser', response.data.perfil)
-        sessionStorage.setItem('nomeUser', response.data.nome)
-        sessionStorage.setItem('notaUser', response.data.nota)
-        sessionStorage.setItem('fotoUser', response.data.foto)
-        navigate("/meu-perfil");
-      })
-      .catch(error => {
-        console.log('Erro ao obter detalhes do perfil:', error);
-      });
-  }
+  // const obterDetalhesPerfil = (userId) => {
+  //   api.get(`/usuarios/${userId}`)
+  //     .then((response) => {
+  //       console.log('Detalhes do perfil obtidos com sucesso:', response.data);
+  //       sessionStorage.setItem('idUser', response.data.id)
+  //       sessionStorage.setItem('generoUser', response.data.genero)
+  //       sessionStorage.setItem('perfilUser', response.data.perfil)
+  //       sessionStorage.setItem('nomeUser', response.data.nome)
+  //       sessionStorage.setItem('notaUser', response.data.nota)
+  //       sessionStorage.setItem('fotoUser', response.data.foto)
+  //       navigate("/meu-perfil");
+  //     })
+  //     .catch(error => {
+  //       console.log('Erro ao obter detalhes do perfil:', error);
+  //     });
+  // }
 
   const handleRedefenirSenha = () => {
     
