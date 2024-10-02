@@ -70,7 +70,7 @@ function CardCarro({
 
   useEffect(() => {
     definirCorCarro()
-  }, [])
+  }, [cor])
 
   return (
     <div className={styles["box-carro"]}>

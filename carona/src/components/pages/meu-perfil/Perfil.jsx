@@ -39,7 +39,41 @@ function Perfil() {
   //   }
   // })
 
-  const [userData, setUserData] = useState({})
+  const [userData, setUserData] = useState({
+    id: 1,
+    nome: "User Teste",
+    email: "user@email.com",
+    cpf: "11122233344",
+    genero: "Masculino",
+    dataNascimento: "18/03/2004",
+    perfil: "Passageiro",
+    fotoUrl: "https://foto.com",
+    endereco: {
+        latitude: -10.0000,
+        longitude: -23.40,
+        cidade: "São Paulo",
+        uf: "SP",
+        cep: "012345-000",
+        bairro: "Consolação",
+        logradouro: "Rua Haddock Lobo",
+        numero: 300
+    },
+    viagens: [],
+    avaliacoes: [],
+    motoristaFidelizado: {
+        id: null,
+        nome: "",
+        fotoUrl: "",
+        notaGeral: null,
+        qtdViagensJuntos: null,
+        localidade: "" // cidade + uf do endereço
+    },
+    principalTrajeto: {
+        partida: "", // cidade + uf do endereço
+        chegada: "" // cidade + uf do endereço
+    }
+})
+
 
   const [userEditData, setUserEditData] = useState({
     nome: userData.nome,

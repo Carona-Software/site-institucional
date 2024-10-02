@@ -43,7 +43,7 @@ function Login() {
         sessionStorage.setItem('generoUser', response.data.genero)
         sessionStorage.setItem('perfilUser', response.data.perfil)
         sessionStorage.setItem('nomeUser', response.data.nome)
-        sessionStorage.setItem('notaUser', response.data.nota)
+        sessionStorage.setItem('notaGeralUser', response.data.nota)
         sessionStorage.setItem('fotoUser', response.data.foto)
         toast.success("Login realizado com sucesso")
         navigate(`/dashboard/${response.data.id}`);

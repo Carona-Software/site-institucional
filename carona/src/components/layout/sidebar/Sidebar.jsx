@@ -17,7 +17,7 @@ function Sidebar({ currentPageName }) {
 
   const perfilUser = sessionStorage.getItem('perfilUser');
   const nomeUser = sessionStorage.getItem('nomeUser');
-  const notaUser = sessionStorage.getItem('notaUser');
+  const notaUser = sessionStorage.getItem('notaGeralUser');
   const idUser = sessionStorage.getItem('idUser');
   const fotoUser = sessionStorage.getItem('fotoUser');
 
@@ -33,7 +33,7 @@ function Sidebar({ currentPageName }) {
 
       <div className={styles["box-user"]}>
         <div className={styles["user-foto"]}>
-          <img src={fotoUser ? fotoUser : imgUser} alt="Profile" />
+          <img src={(fotoUser == null || fotoUser === 'undefined' || fotoUser === undefined) ? fotoUser : imgUser} alt="Profile" />
         </div>
         <div className={styles["user-infos"]}>
           <p>{nomeUser}</p>
@@ -41,7 +41,7 @@ function Sidebar({ currentPageName }) {
             <FaStar />
             <span id="user-nota">
               {
-                (notaUser == null || notaUser === '') ? '--' : notaUser
+                (notaUser == null || notaUser === 'undefined' || notaUser === undefined) ? '--' : notaUser
               }
             </span>
           </div>

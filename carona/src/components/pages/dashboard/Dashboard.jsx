@@ -20,33 +20,66 @@ function Dashboard() {
     const perfilUser = sessionStorage.getItem('perfilUser');
     const idUser = sessionStorage.getItem('idUser');
 
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState({
+        id: 1,
+        nome: "User Teste",
+        email: "user@email.com",
+        cpf: "11122233344",
+        genero: "Masculino",
+        dataNascimento: "18/03/2004",
+        perfil: "Passageiro",
+        fotoUrl: "https://foto.com",
+        endereco: {
+            latitude: -10.0000,
+            longitude: -23.40,
+            cidade: "São Paulo",
+            uf: "SP",
+            cep: "012345-000",
+            bairro: "Consolação",
+            logradouro: "Rua Haddock Lobo",
+            numero: 300
+        },
+        viagens: [],
+        avaliacoes: [],
+        motoristaFidelizado: {
+            id: null,
+            nome: "",
+            fotoUrl: "",
+            notaGeral: null,
+            qtdViagensJuntos: null,
+            localidade: "" // cidade + uf do endereço
+        },
+        principalTrajeto: {
+            partida: "", // cidade + uf do endereço
+            chegada: "" // cidade + uf do endereço
+        }
+    })
     const [hasMotoristaFidelizado, setHasMotoristaFidelizado] = useState(false)
     const [hasPassageirosFidelizados, setHasPassageirosFidelizados] = useState(false)
 
-    const getUserInfo = async () => {
-        try {
-            const response = await api.get(`/usuarios/${idUser}`)
-            setUserData(response.data)
+    // const getUserInfo = async () => {
+    //     try {
+    //         const response = await api.get(`/usuarios/${idUser}`)
+    //         setUserData(response.data)
 
-            if (response.data.perfil.toUpperCase() === "MOTORISTA") {
-                if (response.data.passageirosFidelizados.length > 0) {
-                    setHasPassageirosFidelizados(true)
-                }
-            } else {
-                if (response.data.motoristaFidelizado.nome !== undefined) {
-                    setHasMotoristaFidelizado(true)
-                }
-            }
-        } catch (error) {
-            console.log("Erro ao obter informações do usuário: ", error);
-            toast.error("Não foi possível consultar suas informações")
-        }
-    }
+    //         if (response.data.perfil.toUpperCase() === "MOTORISTA") {
+    //             if (response.data.passageirosFidelizados.length > 0) {
+    //                 setHasPassageirosFidelizados(true)
+    //             }
+    //         } else {
+    //             if (userData.motoristaFidelizado != null) {
+    //                 setHasMotoristaFidelizado(true)
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.log("Erro ao obter informações do usuário: ", error);
+    //         toast.error("Não foi possível consultar suas informações")
+    //     }
+    // }
 
-    useEffect(() => {
-        getUserInfo();
-    }, []);
+    // useEffect(() => {
+    //     getUserInfo();
+    // }, []);
 
     const [notaGeralComunicacao, setNotaGeralComunicacao] = useState(0)
     const [notaGeralPontualidade, setNotaGeralPontualidade] = useState(0)
@@ -139,7 +172,8 @@ function Dashboard() {
                                     <div className={styles["simple-box"]}>
                                         <FaMapLocationDot />
                                         <div className={styles["valor"]}>
-                                            <p>{userData.viagens.length}</p>
+                                            {/* <p>{userData.viagens.length}</p> */}
+                                            <p>{0}</p>
                                             <span>viagens realizadas</span>
                                         </div>
                                     </div>
@@ -159,7 +193,7 @@ function Dashboard() {
                                             <MdMyLocation />
                                             <span>
                                                 {
-                                                    userData.principalTrajeto.partida !== undefined && userData.principalTrajeto.partida !== ""
+                                                   ( userData.principalTrajeto.partida !== undefined && userData.principalTrajeto.partida !== "")
                                                         ? userData.principalTrajeto.partida
                                                         : "--"
                                                 }
@@ -175,14 +209,6 @@ function Dashboard() {
                                                 }
                                             </span>
                                         </div>
-                                        {
-                                            userData.principalTrajeto.chegada !== undefined
-                                            && (
-                                                <>
-
-                                                </>)
-
-                                        }
                                     </div>
                                 </div>
                             </div>
