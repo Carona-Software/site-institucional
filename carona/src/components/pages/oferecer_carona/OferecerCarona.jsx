@@ -13,9 +13,8 @@ import { toast } from "react-toastify";
 
 function OferecerCarona() {
 
-  const idUser = localStorage.getItem("idUser");
-  const generoUser = localStorage.getItem('generoUser')
-  //   const generoUser = "FEMININO";
+  const idUser = sessionStorage.getItem("idUser");
+  const generoUser = sessionStorage.getItem('generoUser')
 
   let local = useLocation();
   const navigate = useNavigate();
@@ -24,15 +23,18 @@ function OferecerCarona() {
 
   const [carrosUser, setCarrosUser] = useState([]);
 
-  // useEffect(() => {
-  //   api
-  //     .get(`/carros/${idUser}`)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setCarrosUser(res.data);
-  //     })
-  //     .catch((error) => console.log(error));
-  // }, [idUser]);
+  const getCarrosUser = async () => {
+    await api.get(`/carros/usuario/${idUser}`)
+      .then((res) => {
+        console.log(res.data);
+        setCarrosUser(res.data)
+      })
+      .catch(error => console.log('Erro ao buscar carros do usuário: ', error))
+  }
+
+  useEffect(() => {
+    getCarrosUser();
+  }, []);
 
   const formatDateForInput = (date) => {
     const year = date.getFullYear();

@@ -4,6 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
 import imgUser from '../../../../utils/assets/user-image.png'
 import { useEffect } from 'react';
+import { captializeWord } from '../../../../utils/functions';
 
 function EditForm({
     userData,
@@ -80,7 +81,7 @@ function EditForm({
                 </div>
                 <div className={styles["info"]}>
                     <h4>Sexo</h4>
-                    <span>{userData.genero}</span>
+                    <span>{captializeWord(userData.genero)}</span>
                 </div>
                 <div className={styles["info"]}>
                     <h4>Email</h4>
@@ -108,7 +109,7 @@ function EditForm({
                 </div>
                 <div className={styles["info"]}>
                     <h4>Perfil</h4>
-                    <span>{userData.perfil}</span>
+                    <span>{captializeWord(userData.perfil)}</span>
                 </div>
             </div>
 

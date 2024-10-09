@@ -20,84 +20,54 @@ function Perfil() {
   const [showPassword, setShowPassword] = useState(false)
   const [codigoFoiEnviado, setCodigoFoiEnviado] = useState(false)
   const [codigoSenha, setCodigoSenha] = useState()
-  // const [userData, setUserData] = useState({
-  //   nome: 'Gustavo Medeiros Silva',
-  //   cpf: '123.456.789-00',
-  //   email: 'gustavo@email.com',
-  //   senha: 'Gug4med$',
-  //   dataNascimento: '2003/06/10',
-  //   genero: 'Masculino',
-  //   perfil: 'Passageiro',
-  //   fotoUrl: '',
-  //   endereco: {
-  //     cep: '04244000',
-  //     logradouro: 'Estrada das Lágrimas',
-  //     cidade: 'São Paulo',
-  //     uf: 'SP',
-  //     bairro: 'São João Clímaco',
-  //     numero: '3621',
-  //   }
-  // })
 
   const [userData, setUserData] = useState({
     id: 1,
-    nome: "User Teste",
-    email: "user@email.com",
-    cpf: "11122233344",
-    genero: "Masculino",
-    dataNascimento: "18/03/2004",
-    perfil: "Passageiro",
-    fotoUrl: "https://foto.com",
+    nome: "",
+    email: "",
+    cpf: "",
+    genero: "",
+    dataNascimento: "",
+    perfil: "",
+    fotoUrl: "",
     endereco: {
-        latitude: -10.0000,
-        longitude: -23.40,
-        cidade: "São Paulo",
-        uf: "SP",
-        cep: "012345-000",
-        bairro: "Consolação",
-        logradouro: "Rua Haddock Lobo",
-        numero: 300
+      latitude: null,
+      longitude: null,
+      cidade: "",
+      uf: "",
+      cep: "",
+      bairro: "",
+      logradouro: "",
+      numero: null
     },
     viagens: [],
     avaliacoes: [],
     motoristaFidelizado: {
-        id: null,
-        nome: "",
-        fotoUrl: "",
-        notaGeral: null,
-        qtdViagensJuntos: null,
-        localidade: "" // cidade + uf do endereço
+      id: null,
+      nome: "",
+      fotoUrl: "",
+      notaGeral: null,
+      qtdViagensJuntos: null,
+      localidade: "" // cidade + uf do endereço
     },
     principalTrajeto: {
-        partida: "", // cidade + uf do endereço
-        chegada: "" // cidade + uf do endereço
-    }
-})
-
-
-  const [userEditData, setUserEditData] = useState({
-    nome: userData.nome,
-    cpf: userData.cpf,
-    email: userData.email,
-    senha: userData.senha,
-    dataNascimento: userData.dataNascimento,
-    genero: userData.genero,
-    perfil: userData.perfil,
-    fotoUrl: userData.fotoUrl,
-    endereco: {
-      cep: userData.endereco.cep,
-      logradouro: userData.endereco.logradouro,
-      cidade: userData.endereco.cidade,
-      uf: userData.endereco.uf,
-      bairro: userData.endereco.bairro,
-      numero: userData.endereco.numero,
+      partida: "", // cidade + uf do endereço
+      chegada: "" // cidade + uf do endereço
     }
   })
+
+
+  const [userEditData, setUserEditData] = useState({})
 
   const getUserInfo = async () => {
     try {
       const response = await api.get(`/usuarios/${idUser}`)
       setUserData(response.data)
+
+      sessionStorage.setItem('notaGeralUser', response.data.notaMedia)
+      sessionStorage.setItem('fotoUser', response.data.fotoUrl)
+      sessionStorage.setItem('nomeUser', response.data.nome)
+
       setUserData({
         nome: response.data.nome,
         cpf: response.data.cpf,
@@ -125,6 +95,27 @@ function Perfil() {
   useEffect(() => {
     getUserInfo();
   }, []);
+
+  useEffect(() => {
+    setUserEditData({
+      nome: userData.nome,
+      cpf: userData.cpf,
+      email: userData.email,
+      senha: userData.senha,
+      dataNascimento: userData.dataNascimento,
+      genero: userData.genero,
+      perfil: userData.perfil,
+      fotoUrl: userData.fotoUrl,
+      endereco: {
+        cep: userData.endereco.cep,
+        logradouro: userData.endereco.logradouro,
+        cidade: userData.endereco.cidade,
+        uf: userData.endereco.uf,
+        bairro: userData.endereco.bairro,
+        numero: userData.endereco.numero,
+      }
+    })
+  }, [userData])
 
   const handleCancelEdit = () => {
     setIsOnEditForm(false)

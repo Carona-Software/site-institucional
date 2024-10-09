@@ -1,11 +1,13 @@
 import { FaStar } from 'react-icons/fa6'
 import styles from './CardAvaliacao.module.css'
+import defaultImgUser from '../../../../utils/assets/user-image.png'
+import { formatarData } from '../../../../utils/functions'
 
 function CardAvaliacao({
     fotoUser,
     nome,
     data,
-    notaGeral,
+    notaMedia,
     comentario
 }) {
     return (
@@ -13,18 +15,18 @@ function CardAvaliacao({
             <div className={styles["header"]}>
                 <div className={styles["foto-nome"]}>
                     <div className={styles["box-image"]}>
-                        <img src={fotoUser} alt={nome} />
+                        <img src={fotoUser ? fotoUser : defaultImgUser} alt={nome} />
                     </div>
 
                     <div className={styles["nome-data"]}>
                         <h5>{nome}</h5>
-                        <span>{data}</span>
+                        <span>{formatarData(data)}</span>
                     </div>
                 </div>
 
                 <div className={styles["nota-geral"]}>
                     <FaStar />
-                    <span>{notaGeral}</span>
+                    <span>{notaMedia}</span>
                 </div>
             </div>
 

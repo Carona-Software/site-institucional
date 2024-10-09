@@ -11,6 +11,7 @@ import { MdOutlineAddCircle } from "react-icons/md";
 import { FaCar } from "react-icons/fa";
 import { SiGoogleanalytics } from "react-icons/si";
 import imgUser from '../../../utils/assets/user-image.png'
+import { getFirstName } from "../../../utils/functions";
 
 function Sidebar({ currentPageName }) {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ function Sidebar({ currentPageName }) {
           <img src={(fotoUser == null || fotoUser === 'undefined' || fotoUser === undefined) ? fotoUser : imgUser} alt="Profile" />
         </div>
         <div className={styles["user-infos"]}>
-          <p>{nomeUser}</p>
+          <p>{getFirstName(nomeUser)}</p>
           <div className={styles["box-nota"]}>
             <FaStar />
             <span id="user-nota">

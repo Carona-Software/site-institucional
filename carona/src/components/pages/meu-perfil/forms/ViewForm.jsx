@@ -1,5 +1,6 @@
 import styles from './Forms.module.css'
 import imgUser from '../../../../utils/assets/user-image.png'
+import { captializeWord, formatarData } from '../../../../utils/functions'
 
 function ViewForm({ userData, onPasswordClick }) {
     return (
@@ -22,7 +23,7 @@ function ViewForm({ userData, onPasswordClick }) {
                 </div>
                 <div className={styles["info"]}>
                     <h4>Sexo</h4>
-                    <span>{userData.genero}</span>
+                    <span>{captializeWord(userData.genero)}</span>
                 </div>
                 <div className={styles["info"]}>
                     <h4>Email</h4>
@@ -34,11 +35,11 @@ function ViewForm({ userData, onPasswordClick }) {
                 </div>
                 <div className={styles["info"]}>
                     <h4>Data de Nascimento</h4>
-                    <span>{userData.dataNascimento}</span>
+                    <span>{formatarData(userData.dataNascimento)}</span>
                 </div>
                 <div className={styles["info"]}>
                     <h4>Perfil</h4>
-                    <span>{userData.perfil}</span>
+                    <span>{captializeWord(userData.perfil)}</span>
                 </div>
             </div>
 

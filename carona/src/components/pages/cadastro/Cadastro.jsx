@@ -14,6 +14,7 @@ import api from "../../../Api";
 function Cadastro() {
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [currentComponent, setCurrentComponent] = useState(1);
   const [widthProgressBar, setWidthProgressBar] = useState(33);
   const [pessoalData, setPessoalData] = useState({
@@ -264,6 +265,8 @@ function Cadastro() {
       },
     };
 
+    setIsLoading(true)
+
     console.log("Enviando dados para o cadastro: ", JSON.stringify(usuarioCriacaoDto));
 
     api
@@ -276,7 +279,10 @@ function Cadastro() {
       .catch((error) => {
         toast.error("Houve um erro ao realizar cadastro")
         console.error("Erro ao cadastrar usuário: ", error);
-      });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      })
   };
 
   return (
@@ -325,6 +331,7 @@ function Cadastro() {
               onClickEvent={handleClick}
               type="primary"
               label={currentComponent === 3 ? "Finalizar" : "Próximo"}
+              loading={isLoading}
             />
           </div>
         </div>

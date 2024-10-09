@@ -11,6 +11,10 @@
   align-items: center;
   margin-top: 8px;
   gap: 10px;
+
+  & img {
+    height: 32px;
+  }
 }
 
 .button:hover {

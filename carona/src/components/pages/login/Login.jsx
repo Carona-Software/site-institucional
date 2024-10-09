@@ -43,8 +43,8 @@ function Login() {
         sessionStorage.setItem('generoUser', response.data.genero)
         sessionStorage.setItem('perfilUser', response.data.perfil)
         sessionStorage.setItem('nomeUser', response.data.nome)
-        sessionStorage.setItem('notaGeralUser', response.data.nota)
-        sessionStorage.setItem('fotoUser', response.data.foto)
+        sessionStorage.setItem('notaGeralUser', response.data.notaMedia)
+        sessionStorage.setItem('fotoUser', response.data.fotoUrl)
         toast.success("Login realizado com sucesso")
         navigate(`/dashboard/${response.data.id}`);
       })
@@ -56,9 +56,7 @@ function Login() {
         }
         toast.error("Houve um erro ao realizar o login")
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .finally();
   }
 
   // Função para obter os detalhes do perfil
@@ -80,7 +78,7 @@ function Login() {
   // }
 
   const handleRedefenirSenha = () => {
-    
+
   }
 
   return (
@@ -142,7 +140,12 @@ function Login() {
             </div>
 
             <div className={styles['button-wrapper']}>
-              <ActionButton type='primary' label={isLoading ? 'Carregando...' : 'Entrar'} disabled={isLoading} />
+              <ActionButton
+                type='primary'
+                label={'Entrar'}
+                loading={isLoading}
+              />
+
             </div>
 
             <Link to='/cadastro'><p>Não tenho conta, quero me cadastrar</p></Link>

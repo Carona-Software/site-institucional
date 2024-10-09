@@ -66,7 +66,7 @@ function ModalCarro({
                 <div className={styles["conjunto-input"]}>
                     <label htmlFor="placa">Placa</label>
                     <InputMask
-                        mask="aaa-9a99"
+                        mask="aaa9a99"
                         type="text"
                         name="placa"
                         value={carroData.placa}

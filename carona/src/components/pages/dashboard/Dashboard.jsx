@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react';
 import { PiPersonFill } from "react-icons/pi";
 import CardAvaliacao from './card_avaliacao/CardAvaliacao';
 import CardFidelizado from './card_fidelizado/CardFidelizado';
-import imgUser from '../../../utils/assets/user-image.png'
 import api from '../../../Api';
 import { toast } from 'react-toastify';
 
@@ -50,43 +49,61 @@ function Dashboard() {
             localidade: "" // cidade + uf do endereço
         },
         principalTrajeto: {
-            partida: "", // cidade + uf do endereço
-            chegada: "" // cidade + uf do endereço
+            cidadePartida: "",
+            ufPartida: "",
+            cidadeChegada: "",
+            ufChegada: ""
         }
     })
+
     const [hasMotoristaFidelizado, setHasMotoristaFidelizado] = useState(false)
     const [hasPassageirosFidelizados, setHasPassageirosFidelizados] = useState(false)
 
-    // const getUserInfo = async () => {
-    //     try {
-    //         const response = await api.get(`/usuarios/${idUser}`)
-    //         setUserData(response.data)
+    const getUserInfo = async () => {
+        try {
+            const response = await api.get(`/usuarios/${idUser}`)
+            setUserData(response.data)
 
-    //         if (response.data.perfil.toUpperCase() === "MOTORISTA") {
-    //             if (response.data.passageirosFidelizados.length > 0) {
-    //                 setHasPassageirosFidelizados(true)
-    //             }
-    //         } else {
-    //             if (userData.motoristaFidelizado != null) {
-    //                 setHasMotoristaFidelizado(true)
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.log("Erro ao obter informações do usuário: ", error);
-    //         toast.error("Não foi possível consultar suas informações")
-    //     }
-    // }
+            sessionStorage.setItem('notaGeralUser', response.data.notaMedia)
+            sessionStorage.setItem('fotoUser', response.data.fotoUrl)
+            sessionStorage.setItem('nomeUser', response.data.nome)
 
-    // useEffect(() => {
-    //     getUserInfo();
-    // }, []);
+            if (response.data.perfil.toUpperCase() === "MOTORISTA") {
+                if (response.data.passageirosFidelizados.length > 0) {
+                    setHasPassageirosFidelizados(true)
+                }
+            } else {
+                if (userData.motoristaFidelizado != null) {
+                    setHasMotoristaFidelizado(true)
+                }
+            }
+        } catch (error) {
+            console.log("Erro ao obter informações do usuário: ", error);
+            toast.error("Não foi possível consultar suas informações")
+        }
+    }
+
+    useEffect(() => {
+        getUserInfo();
+    }, []);
+
+    const [showNotaComunicacao, setShowNotaComunicacao] = useState(false)
+    const [showNotaPontualidade, setShowNotaPontualidade] = useState(false)
+    const [showNotaDirigibilidade, setShowNotaDirigibilidade] = useState(false)
+    const [showNotaSeguranca, setShowNotaSeguranca] = useState(false)
+    const [showNotaComportamento, setShowNotaComportamento] = useState(false)
 
     const [notaGeralComunicacao, setNotaGeralComunicacao] = useState(0)
     const [notaGeralPontualidade, setNotaGeralPontualidade] = useState(0)
     const [notaGeralDirigibilidade, setNotaGeralDirigibilidade] = useState(0)
     const [notaGeralSeguranca, setNotaGeralSeguranca] = useState(0)
     const [notaGeralComportamento, setNotaGeralComportamento] = useState(0)
-    const [notaMedia, setNotaMedia] = useState(0)
+
+    const [notaMediaComunicacao, setNotaMediaComunicacao] = useState(0)
+    const [notaMediaPontualidade, setNotaMediaPontualidade] = useState(0)
+    const [notaMediaDirigibilidade, setNotaMediaDirigibilidade] = useState(0)
+    const [notaMediaSeguranca, setNotaMediaSeguranca] = useState(0)
+    const [notaMediaComportamento, setNotaMediaComportamento] = useState(0)
 
     const calculateTotalPorcentageCriterio = (media) => {
         return ((media / 5) * 100).toFixed(1)
@@ -101,8 +118,12 @@ function Dashboard() {
             let somaTotalPontualidade = 0
             let somaTotalDirigibilidade = 0
 
-            userData.avaliacoes.forEach(avaliacoes => {
-                avaliacoes.avaliacao.forEach(criterio => {
+            console.log('userData.avaliacoes: ', userData.avaliacoes);
+
+            userData.avaliacoes.forEach(avaliacao => {
+                console.log('avaliacao: ', avaliacao);
+
+                avaliacao.notasCriterios.forEach(criterio => {
                     switch (criterio.criterio) {
                         case "Comunicação":
                             somaTotalComunicacao += criterio.nota
@@ -133,28 +154,23 @@ function Dashboard() {
             let mediaPontualidade = somaTotalPontualidade / length
             let mediaDirigibilidade = somaTotalDirigibilidade / length
 
+            setNotaMediaComunicacao(mediaComunicacao)
+            setNotaMediaPontualidade(mediaPontualidade)
+            setNotaMediaDirigibilidade(mediaDirigibilidade)
+            setNotaMediaSeguranca(mediaSeguranca)
+            setNotaMediaComportamento(mediaComportamento)
+
             setNotaGeralComunicacao(calculateTotalPorcentageCriterio(mediaComunicacao))
             setNotaGeralPontualidade(calculateTotalPorcentageCriterio(mediaPontualidade))
             setNotaGeralDirigibilidade(calculateTotalPorcentageCriterio(mediaDirigibilidade))
             setNotaGeralSeguranca(calculateTotalPorcentageCriterio(mediaSeguranca))
             setNotaGeralComportamento(calculateTotalPorcentageCriterio(mediaComportamento))
-
-            let notaMedia
-
-
-            if (perfilUser === "MOTORISTA") {
-                notaMedia = (mediaComunicacao + mediaSeguranca + mediaPontualidade + mediaDirigibilidade) / 4
-            } else {
-                notaMedia = (mediaComunicacao + mediaSeguranca + mediaPontualidade + mediaComportamento) / 4
-            }
-
-            setNotaMedia(notaMedia.toFixed(1))
         }
     }
 
     useEffect(() => {
         calculateMediaCriterios()
-    }, [])
+    }, [userData.avaliacoes])
 
     return (
         <>
@@ -172,15 +188,14 @@ function Dashboard() {
                                     <div className={styles["simple-box"]}>
                                         <FaMapLocationDot />
                                         <div className={styles["valor"]}>
-                                            {/* <p>{userData.viagens.length}</p> */}
-                                            <p>{0}</p>
+                                            <p>{userData.viagens.length}</p>
                                             <span>viagens realizadas</span>
                                         </div>
                                     </div>
                                     <div className={styles["simple-box"]}>
                                         <FaStar />
                                         <div className={styles["valor"]}>
-                                            <p>{notaMedia > 0.0 ? notaMedia : "--"}</p>
+                                            <p>{userData.notaMedia > 0.0 ? userData.notaMedia : "--"}</p>
                                             <span>nota média</span>
                                         </div>
                                     </div>
@@ -193,8 +208,8 @@ function Dashboard() {
                                             <MdMyLocation />
                                             <span>
                                                 {
-                                                   ( userData.principalTrajeto.partida !== undefined && userData.principalTrajeto.partida !== "")
-                                                        ? userData.principalTrajeto.partida
+                                                    (userData.principalTrajeto.cidadePartida !== undefined && userData.principalTrajeto.cidadePartida !== "" && userData.principalTrajeto.cidadePartida !== null)
+                                                        ? `${userData.principalTrajeto.cidadePartida}, ${userData.principalTrajeto.ufPartida}`
                                                         : "--"
                                                 }
                                             </span>
@@ -203,8 +218,8 @@ function Dashboard() {
                                             <IoLocationSharp />
                                             <span>
                                                 {
-                                                    userData.principalTrajeto.chegada !== undefined && userData.principalTrajeto.chegada !== ""
-                                                        ? userData.principalTrajeto.chegada
+                                                    (userData.principalTrajeto.cidadeChegada !== undefined && userData.principalTrajeto.cidadeChegada !== "" && userData.principalTrajeto.cidadePartida !== null)
+                                                        ? `${userData.principalTrajeto.cidadeChegada}, ${userData.principalTrajeto.ufChegada}`
                                                         : "--"
                                                 }
                                             </span>
@@ -218,7 +233,19 @@ function Dashboard() {
                                     <IoMdChatbubbles />
                                     <span>0</span>
                                     <div className={styles["total-nota"]}>
-                                        <div className={styles["nota"]} style={{ width: `${notaGeralComunicacao}%` }}></div>
+                                        <div
+                                            className={styles["nota"]}
+                                            style={{ width: `${notaGeralComunicacao}%` }}
+                                            onMouseEnter={() => setShowNotaComunicacao(true)}
+                                            onMouseLeave={() => setShowNotaComunicacao(false)}
+                                        >
+                                            {
+                                                showNotaComunicacao &&
+                                                <div className={styles["tooltip"]}>
+                                                    <span>{notaMediaComunicacao}</span>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                     <span>5</span>
                                 </div>
@@ -227,7 +254,19 @@ function Dashboard() {
                                     <IoShieldCheckmarkSharp />
                                     <span>0</span>
                                     <div className={styles["total-nota"]}>
-                                        <div className={styles["nota"]} style={{ width: `${notaGeralSeguranca}%` }}></div>
+                                        <div
+                                            className={styles["nota"]}
+                                            style={{ width: `${notaGeralSeguranca}%` }}
+                                            onMouseEnter={() => setShowNotaSeguranca(true)}
+                                            onMouseLeave={() => setShowNotaSeguranca(false)}
+                                        >
+                                            {
+                                                showNotaSeguranca &&
+                                                <div className={styles["tooltip"]}>
+                                                    <span>{notaMediaSeguranca}</span>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                     <span>5</span>
                                 </div>
@@ -239,7 +278,19 @@ function Dashboard() {
                                                 <GiSteeringWheel />
                                                 <span>0</span>
                                                 <div className={styles["total-nota"]}>
-                                                    <div className={styles["nota"]} style={{ width: `${notaGeralDirigibilidade}%` }}></div>
+                                                    <div
+                                                        className={styles["nota"]}
+                                                        style={{ width: `${notaGeralDirigibilidade}%` }}
+                                                        onMouseEnter={() => setShowNotaDirigibilidade(true)}
+                                                        onMouseLeave={() => setShowNotaDirigibilidade(false)}
+                                                    >
+                                                        {
+                                                            showNotaDirigibilidade &&
+                                                            <div className={styles["tooltip"]}>
+                                                                <span>{notaMediaDirigibilidade}</span>
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </div>
                                                 <span>5</span>
                                             </div>
@@ -248,7 +299,19 @@ function Dashboard() {
                                                 <PiPersonFill />
                                                 <span>0</span>
                                                 <div className={styles["total-nota"]}>
-                                                    <div className={styles["nota"]} style={{ width: `${notaGeralComportamento}%` }}></div>
+                                                    <div
+                                                        className={styles["nota"]}
+                                                        style={{ width: `${notaGeralComportamento}%` }}
+                                                        onMouseEnter={() => setShowNotaComportamento(true)}
+                                                        onMouseLeave={() => setShowNotaComportamento(false)}
+                                                    >
+                                                        {
+                                                            showNotaComportamento &&
+                                                            <div className={styles["tooltip"]}>
+                                                                <span>{notaMediaComportamento}</span>
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </div>
                                                 <span>5</span>
                                             </div>
@@ -259,7 +322,19 @@ function Dashboard() {
                                     <FaClock />
                                     <span>0</span>
                                     <div className={styles["total-nota"]}>
-                                        <div className={styles["nota"]} style={{ width: `${notaGeralPontualidade}%` }}></div>
+                                        <div
+                                            className={styles["nota"]}
+                                            style={{ width: `${notaGeralPontualidade}%` }}
+                                            onMouseEnter={() => setShowNotaPontualidade(true)}
+                                            onMouseLeave={() => setShowNotaPontualidade(false)}
+                                        >
+                                            {
+                                                showNotaPontualidade &&
+                                                <div className={styles["tooltip"]}>
+                                                    <span>{notaMediaPontualidade}</span>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                     <span>5</span>
                                 </div>
@@ -313,7 +388,7 @@ function Dashboard() {
                                                     fotoUser={avaliacao.avaliador.fotoUrl}
                                                     nome={avaliacao.avaliador.nome}
                                                     data={avaliacao.data}
-                                                    notaGeral={avaliacao.avaliador.notaGeral}
+                                                    notaMedia={avaliacao.notaMedia}
                                                 />
                                             ))
                                             : <p>Sem avaliações por enquanto</p>

@@ -214,7 +214,7 @@ const Carros = () => {
       modelo: carro.modelo,
       placa: carro.placa,
       cor: carro.cor,
-      fkUsuario: carro.fkUsuario,
+      fkUsuario: carro.motorista.id,
     })
     setShowForm(true)
   }
