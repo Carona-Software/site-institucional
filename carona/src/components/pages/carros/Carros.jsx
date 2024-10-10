@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import ModalCarro from "./modal_carro/ModalCarro";
 import api from '../../../Api'
 import imgSemCarros from '../../../utils/assets/image-not-found-viagem.svg'
+import authentication from "../../../authentication";
 
 const Carros = () => {
   const idUser = sessionStorage.getItem('idUser')
@@ -347,4 +348,4 @@ const Carros = () => {
   );
 };
 
-export default Carros;
+export default authentication(Carros, 'MOTORISTA');

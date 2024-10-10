@@ -1,13 +1,20 @@
 import styles from './Forms.module.css'
 import imgUser from '../../../../utils/assets/user-image.png'
-import { captializeWord, formatarData } from '../../../../utils/functions'
+import { captializeWord, formatarData, isImageUrlValid } from '../../../../utils/functions'
+import { useState } from 'react'
 
 function ViewForm({ userData, onPasswordClick }) {
+    const [isFotoValid, setIsFotoValid] = useState(false)
+
+    isImageUrlValid(userData.fotoUrl).then(isValid => {
+        setIsFotoValid(isValid)
+    })
+    
     return (
         <>
             <div className={styles["image-box"]}>
                 {
-                    userData.fotoUrl ?
+                    isFotoValid ?
                         (
                             <img src={userData.fotoUrl} alt={`Foto de ${userData.nome}`} />
                         ) : (

@@ -13,7 +13,8 @@ import { FaCar } from "react-icons/fa";
 import AnimacaoEstrada from '../../layout/animacao_estrada/AnimacaoEstrada';
 import CardPassageiro from './card_passageiro/CardPassageiro';
 import MapGeolocation from '../../map/MapGeolocation';
-import imgUser from '../../../utils/assets/user-image.png'
+import defaultImgUser from '../../../utils/assets/user-image.png'
+import { formatarData, formatTime, isImageUrlValid } from '../../../utils/functions';
 
 function convertMinutesToHours(minutes) {
     if (minutes < 60) {
@@ -28,70 +29,67 @@ function convertMinutesToHours(minutes) {
 function DetalhesViagem() {
     const { idViagem } = useParams();
 
-    const [viagem, setViagem] = useState({
-        id: 1,
-        capacidadePassageiros: 4,
+    const [isLoading, setIsLoading] = useState(true)
+
+    const [viagemData, setViagemData] = useState({
+        id: null,
+        capacidadePassageiros: null,
         apenasMulheres: false,
-        data: "18/03/2024",
-        horarioSaida: "21:00h",
-        horarioChegada: "23:00h",
-        preco: 30.0,
-        status: "Pendente",
-        endereco: {
+        data: null,
+        horarioSaida: null,
+        horarioChegada: null,
+        preco: null,
+        status: "",
+        trajeto: {
             pontoPartida: {
                 latitude: -23.6323164,
                 longitude: -46.5831203,
-                cidade: "São Paulo",
-                uf: "SP",
-                cep: "012345-000",
-                bairro: "Consolação",
-                logradouro: "Rua Haddock Lobo",
-                numero: 300
+                cidade: null,
+                uf: null,
+                cep: null,
+                bairro: null,
+                logradouro: null,
+                numero: null
             },
             pontoChegada: {
                 latitude: -23.6323164,
                 longitude: -46.60,
-                cidade: "Campinas",
-                uf: "SP",
-                cep: "19865-030",
-                bairro: "Guarani",
-                logradouro: "Avenida Guarani",
-                numero: 2100
+                cidade: null,
+                uf: null,
+                cep: null,
+                bairro: null,
+                logradouro: null,
+                numero: null
             },
         },
-        carro: {
-            marca: "Fiat",
-            modelo: "Mobi",
-            cor: "Branco",
-            placa: "ABC1D23"
-        },
-        motorista: {
-            id: 2,
-            nome: "User Teste 3",
-            fotoUrl: "https://foto.com",
-        },
-        passageiros: [
-            {
-                id: 1,
-                nome: "User Teste 2",
-                fotoUrl: "https://foto.com"
-            }
-        ]
+        carro: {},
+        motorista: {},
+        passageiros: []
     });
+
     const [corCarro, setCorCarro] = useState();
+
+    const [isFotoMotoristaValid, setIsFotoMotoristaValid] = useState(false)
 
     const getDetalhesViagem = async () => {
         try {
-            const response = await api.get(`/viagens/detalhes/${idViagem}`);
-            setViagem(response.data)
+            const response = await api.get(`/viagens/${idViagem}`);
+            setViagemData(response.data)
+
+            isImageUrlValid(response.data.motorista.urlFoto).then(isValid => {
+                setIsFotoMotoristaValid(isValid)
+            })
+
+            setIsLoading(false)
         } catch (error) {
+            setIsLoading(false)
             console.log('Não foi possível buscar detalhes da viagem.');
             console.log('Erro: ', error);
         }
     }
 
     const definirCorCarro = () => {
-        switch (viagem.carro.cor) {
+        switch (viagemData.carro.cor) {
             case 'Preto':
                 setCorCarro('#000000')
                 break;
@@ -135,8 +133,11 @@ function DetalhesViagem() {
 
     useEffect(() => {
         getDetalhesViagem()
-        definirCorCarro()
     }, []);
+
+    useEffect(() => {
+        definirCorCarro()
+    }, [viagemData.carro]);
 
     const reservarViagem = () => {
         console.log('');
@@ -149,133 +150,143 @@ function DetalhesViagem() {
             <AnimacaoEstrada />
 
             <div className={styles["main"]}>
-                <div className={styles["container"]}>
-                    <div className={styles["search-bar"]}>
+                {
+                    !isLoading &&
+                    <div className={styles["container"]}>
 
-                        <div className={styles["box-input"]}>
-                            <MdMyLocation />
-                            <input
-                                value={`${viagem.endereco.pontoPartida.cidade}, ${viagem.endereco.pontoPartida.uf}`}
-                                className={styles["inputPartida"]}
-                                disabled
-                            />
+                        <div className={styles["search-bar"]}>
+
+                            <div className={styles["box-input"]}>
+                                <MdMyLocation />
+                                <input
+                                    value={`${viagemData.trajeto.pontoPartida.cidade}, ${viagemData.trajeto.pontoPartida.uf}`}
+                                    className={styles["inputPartida"]}
+                                    disabled
+                                />
+                            </div>
+                            <FaArrowRightLong className={styles["arrow"]} />
+                            <div className={styles["box-input"]}>
+                                <IoLocationSharp />
+                                <input
+                                    value={`${viagemData.trajeto.pontoPartida.cidade}, ${viagemData.trajeto.pontoPartida.uf}`}
+                                    className={styles["inputChegada"]}
+                                    disabled
+                                />
+                            </div>
+                            <div className={styles["box-input-date"]}>
+                                <FaCalendarDays />
+                                <input
+                                    value={formatarData(viagemData.data)}
+                                    className={styles["inputDate"]}
+                                    disabled
+                                />
+                            </div>
+
+                            <button
+                                className={styles["reservar-button"]}
+                                onClick={reservarViagem}>
+                                Reservar
+                            </button>
+
                         </div>
-                        <FaArrowRightLong className={styles["arrow"]} />
-                        <div className={styles["box-input"]}>
-                            <IoLocationSharp />
-                            <input
-                                value={`${viagem.endereco.pontoPartida.cidade}, ${viagem.endereco.pontoPartida.uf}`}
-                                className={styles["inputChegada"]}
-                                disabled
-                            />
-                        </div>
-                        <div className={styles["box-input-date"]}>
-                            <FaCalendarDays />
-                            <input
-                                value={viagem.data}
-                                className={styles["inputDate"]}
-                                disabled
-                            />
-                        </div>
 
-                        <button
-                            className={styles["reservar-button"]}
-                            onClick={reservarViagem}>
-                            Reservar
-                        </button>
+                        <div className={styles["viagem-quadro"]}>
+                            <div className={styles["info"]}>
 
-                    </div>
-
-                    <div className={styles["viagem-quadro"]}>
-                        <div className={styles["info"]}>
-
-                            <div className={styles["motorista"]}>
-                                <img src={viagem.motorista.fotoUrl ? viagem.motorista.fotoUrl : imgUser} alt={viagem.motorista.nome} />
-                                <div className={styles["nome-nota"]}>
-                                    <h4>{viagem.motorista.nome}</h4>
-                                    <div className={styles["nota"]}>
-                                        <FaStar />
-                                        <span>{viagem.motorista.notaGeral ? viagem.motorista.notaGeral : "--"}</span>
+                                <div className={styles["motorista"]}>
+                                    <img src={isFotoMotoristaValid ? viagemData.motorista.fotoUrl : defaultImgUser} alt={viagemData.motorista.nome} />
+                                    <div className={styles["nome-nota"]}>
+                                        <h4>{viagemData.motorista.nome}</h4>
+                                        <div className={styles["nota"]}>
+                                            <FaStar />
+                                            <span>
+                                                {
+                                                    (viagemData.motorista.notaGeral != null || viagemData.motorista.notaGeral <= 0.0)
+                                                        ? "--"
+                                                        : viagemData.motorista.notaGeral
+                                                }
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className={styles["separator"]}></div>
+                                <div className={styles["separator"]}></div>
 
-                            <div className={styles["hora-endereco"]}>
-                                <div className={styles["horarios"]}>
-                                    <span className={styles["hora-definida"]}>{viagem.horarioSaida}h</span>
-                                    <span className={styles["tempo-estimado"]}>{""}</span>
-                                    <span className={styles["hora-definida"]}>{viagem.horarioChegada}h</span>
-                                </div>
-                                <div className={styles["enderecos"]}>
-                                    <span>
-                                        {`
-                                            ${viagem.endereco.pontoPartida.logradouro} - 
-                                            ${viagem.endereco.pontoPartida.cep}, 
-                                            ${viagem.endereco.pontoPartida.bairro}, 
-                                            ${viagem.endereco.pontoPartida.cidade}/
-                                            ${viagem.endereco.pontoPartida.uf}
+                                <div className={styles["hora-endereco"]}>
+                                    <div className={styles["horarios"]}>
+                                        <span className={styles["hora-definida"]}>{formatTime(viagemData.horarioSaida)}h</span>
+                                        <span className={styles["tempo-estimado"]}>{""}</span>
+                                        <span className={styles["hora-definida"]}>{formatTime(viagemData.horarioChegada)}h</span>
+                                    </div>
+                                    <div className={styles["enderecos"]}>
+                                        <span>
+                                            {`
+                                            ${viagemData.trajeto.pontoPartida.logradouro} - 
+                                            ${viagemData.trajeto.pontoPartida.cep}, 
+                                            ${viagemData.trajeto.pontoPartida.bairro}, 
+                                            ${viagemData.trajeto.pontoPartida.cidade}/
+                                            ${viagemData.trajeto.pontoPartida.uf}
                                         `}
-                                    </span>
+                                        </span>
 
-                                    <span>
-                                        {`
-                                            ${viagem.endereco.pontoChegada.logradouro} - 
-                                            ${viagem.endereco.pontoChegada.cep}, 
-                                            ${viagem.endereco.pontoChegada.bairro}, 
-                                            ${viagem.endereco.pontoChegada.cidade}/
-                                            ${viagem.endereco.pontoChegada.uf}
+                                        <span>
+                                            {`
+                                            ${viagemData.trajeto.pontoChegada.logradouro} - 
+                                            ${viagemData.trajeto.pontoChegada.cep}, 
+                                            ${viagemData.trajeto.pontoChegada.bairro}, 
+                                            ${viagemData.trajeto.pontoChegada.cidade}/
+                                            ${viagemData.trajeto.pontoChegada.uf}
                                         `}
-                                    </span>
+                                        </span>
+                                    </div>
                                 </div>
+
+                                <div className={styles["separator"]}></div>
+
+                                <div className={styles["info-carro"]}>
+                                    <div className={styles["modelo-carro"]}>
+                                        <FaCar color={corCarro} />
+                                        <span>{viagemData.carro.marca} {viagemData.carro.modelo}</span>
+                                    </div>
+                                    <div className={styles["placa-carro"]}>
+                                        <img src={placaIcon} alt="Ícone de placa" />
+                                        <span>{viagemData.carro.placa}</span>
+                                    </div>
+                                </div>
+
+                                <div className={styles["separator"]}></div>
+
+                                <div className={styles["passageiros"]}>
+                                    <h5>Passageiros</h5>
+                                    <div className={styles["users"]}>
+                                        {
+                                            viagemData.passageiros.length > 0
+                                                ? viagemData.passageiros.map((passageiro, index) => (
+                                                    <CardPassageiro
+                                                        key={index}
+                                                        foto={passageiro.urlFoto}
+                                                        nome={passageiro.nome}
+                                                        nota={passageiro.notaGeral}
+                                                    />
+                                                ))
+                                                : <p>Sem passageiros por enquanto</p>
+                                        }
+                                    </div>
+                                </div>
+
                             </div>
 
-                            <div className={styles["separator"]}></div>
-
-                            <div className={styles["info-carro"]}>
-                                <div className={styles["modelo-carro"]}>
-                                    <FaCar style={{ color: corCarro}} />
-                                    <span>{viagem.carro.marca} {viagem.carro.modelo}</span>
-                                </div>
-                                <div className={styles["placa-carro"]}>
-                                    <img src={placaIcon} alt="Ícone de placa" />
-                                    <span>{viagem.carro.placa}</span>
-                                </div>
+                            <div className={styles["mapa"]}>
+                                <MapGeolocation
+                                    latitudePartida={viagemData.trajeto.pontoPartida.latitude}
+                                    longitudePartida={viagemData.trajeto.pontoPartida.longitude}
+                                    latitudeDestino={viagemData.trajeto.pontoChegada.latitude}
+                                    longitudeDestino={viagemData.trajeto.pontoChegada.longitude}
+                                />
                             </div>
-
-                            <div className={styles["separator"]}></div>
-
-                            <div className={styles["passageiros"]}>
-                                <h5>Passageiros</h5>
-                                <div className={styles["users"]}>
-                                    {
-                                        viagem.passageiros.length > 0
-                                            ? viagem.passageiros.map((passageiro, index) => (
-                                                <CardPassageiro
-                                                    key={index}
-                                                    foto={passageiro.fotoUrl}
-                                                    nome={passageiro.nome}
-                                                    nota={'--'}
-                                                />
-                                            ))
-                                            : <p>Nenhum passageiro reservou esta viagem até o momento</p>
-                                    }
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div className={styles["mapa"]}>
-                            <MapGeolocation
-                                latitudePartida={viagem.endereco.pontoPartida.latitude}
-                                longitudePartida={viagem.endereco.pontoPartida.longitude}
-                                latitudeDestino={viagem.endereco.pontoChegada.latitude}
-                                longitudeDestino={viagem.endereco.pontoChegada.longitude}
-                            />
                         </div>
                     </div>
-                </div>
+                }
             </div>
         </>
     )

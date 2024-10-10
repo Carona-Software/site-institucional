@@ -10,8 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { MdOutlineAddCircle } from "react-icons/md";
 import { FaCar } from "react-icons/fa";
 import { SiGoogleanalytics } from "react-icons/si";
-import imgUser from '../../../utils/assets/user-image.png'
-import { getFirstName } from "../../../utils/functions";
+import defaultImgUser from '../../../utils/assets/user-image.png'
+import { getFirstName, isImageUrlValid } from "../../../utils/functions";
+import { useState } from "react";
 
 function Sidebar({ currentPageName }) {
   const navigate = useNavigate();
@@ -21,6 +22,12 @@ function Sidebar({ currentPageName }) {
   const notaUser = sessionStorage.getItem('notaGeralUser');
   const idUser = sessionStorage.getItem('idUser');
   const fotoUser = sessionStorage.getItem('fotoUser');
+
+  const [isFotoValid, setIsFotoValid] = useState(false)
+
+    isImageUrlValid(fotoUser).then(isValid => {
+        setIsFotoValid(isValid)
+    })
 
   function logout() {
     localStorage.clear();
@@ -34,7 +41,7 @@ function Sidebar({ currentPageName }) {
 
       <div className={styles["box-user"]}>
         <div className={styles["user-foto"]}>
-          <img src={(fotoUser == null || fotoUser === 'undefined' || fotoUser === undefined) ? fotoUser : imgUser} alt="Profile" />
+          <img src={isFotoValid ? fotoUser : defaultImgUser} alt="Profile" />
         </div>
         <div className={styles["user-infos"]}>
           <p>{getFirstName(nomeUser)}</p>
@@ -42,7 +49,7 @@ function Sidebar({ currentPageName }) {
             <FaStar />
             <span id="user-nota">
               {
-                (notaUser == null || notaUser === 'undefined' || notaUser === undefined) ? '--' : notaUser
+                (notaUser == null || notaUser <= 0.0) ? '--' : notaUser
               }
             </span>
           </div>

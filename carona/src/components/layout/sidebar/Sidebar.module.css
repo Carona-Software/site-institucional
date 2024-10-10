@@ -34,7 +34,7 @@ header {
       & img {
         width: 90px;
         height: 90px;
-        background-color: #fff;
+        /* background-color: #fff; */
         border-radius: 50%;
         object-fit: cover;
       }

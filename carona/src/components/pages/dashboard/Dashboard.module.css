@@ -270,6 +270,21 @@ body {
                         }
                     }
 
+                    & .avaliacoes::-webkit-scrollbar {
+                        width: 18px;
+                    }
+
+                    & .avaliacoes::-webkit-scrollbar-track {
+                        background: #f7f7f7;
+                        border-radius: 15px;
+                    }
+
+                    & .avaliacoes::-webkit-scrollbar-thumb {
+                        background: #b9b9b9;
+                        border-radius: 15px;
+                        border: 6px solid #f7f7f7;
+                    }
+
                     & .start {
                         justify-content: start;
                     }

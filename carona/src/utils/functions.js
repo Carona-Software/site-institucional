@@ -15,3 +15,18 @@ export function getFirstName(name) {
 export function captializeWord(word) {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
 }
+
+export function isImageUrlValid(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);  // Retorna true se a imagem carregou corretamente
+        img.onerror = () => resolve(false);  // Retorna false se houve erro ao carregar a imagem
+        img.src = url;
+    });
+};
+
+export function formatTime(time) {
+    const [hours, minutes] = time.split(":");
+    
+    return `${hours}:${minutes}h`;
+}

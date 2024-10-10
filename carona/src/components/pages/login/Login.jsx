@@ -56,7 +56,7 @@ function Login() {
         }
         toast.error("Houve um erro ao realizar o login")
       })
-      .finally();
+      .finally(() => setIsLoading(false));
   }
 
   // Função para obter os detalhes do perfil

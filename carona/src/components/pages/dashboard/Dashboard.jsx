@@ -19,6 +19,8 @@ function Dashboard() {
     const perfilUser = sessionStorage.getItem('perfilUser');
     const idUser = sessionStorage.getItem('idUser');
 
+    const isMotorista = perfilUser.toUpperCase() === "MOTORISTA"
+
     const [userData, setUserData] = useState({
         id: 1,
         nome: "User Teste",
@@ -56,27 +58,18 @@ function Dashboard() {
         }
     })
 
-    const [hasMotoristaFidelizado, setHasMotoristaFidelizado] = useState(false)
-    const [hasPassageirosFidelizados, setHasPassageirosFidelizados] = useState(false)
+    const messageSemFidelizado = isMotorista ? "Sem passageiro(s) fidelizado(s) por enquanto" : "Sem motorista fidelizado por enquanto"
 
     const getUserInfo = async () => {
         try {
             const response = await api.get(`/usuarios/${idUser}`)
             setUserData(response.data)
+            console.log(response.data)
 
             sessionStorage.setItem('notaGeralUser', response.data.notaMedia)
             sessionStorage.setItem('fotoUser', response.data.fotoUrl)
             sessionStorage.setItem('nomeUser', response.data.nome)
 
-            if (response.data.perfil.toUpperCase() === "MOTORISTA") {
-                if (response.data.passageirosFidelizados.length > 0) {
-                    setHasPassageirosFidelizados(true)
-                }
-            } else {
-                if (userData.motoristaFidelizado != null) {
-                    setHasMotoristaFidelizado(true)
-                }
-            }
         } catch (error) {
             console.log("Erro ao obter informações do usuário: ", error);
             toast.error("Não foi possível consultar suas informações")
@@ -118,11 +111,7 @@ function Dashboard() {
             let somaTotalPontualidade = 0
             let somaTotalDirigibilidade = 0
 
-            console.log('userData.avaliacoes: ', userData.avaliacoes);
-
             userData.avaliacoes.forEach(avaliacao => {
-                console.log('avaliacao: ', avaliacao);
-
                 avaliacao.notasCriterios.forEach(criterio => {
                     switch (criterio.criterio) {
                         case "Comunicação":
@@ -404,35 +393,29 @@ function Dashboard() {
                                 }
 
                                 <div className={styles["fidelizado"]}>
-                                    {
-                                        hasMotoristaFidelizado &&
-                                        <CardFidelizado
-                                            fotoUser={userData.motoristaFidelizado.fotoUrl}
-                                            nomeUser={userData.motoristaFidelizado.nome}
-                                            localidade={userData.motoristaFidelizado.localidade}
-                                            notaGeral={userData.motoristaFidelizado.notaGeral}
-                                            qtdViagensJuntos={userData.motoristaFidelizado.qtdViagensJuntos}
-                                        />
-                                    }
-
-                                    {
-                                        hasPassageirosFidelizados &&
-                                        userData.passageirosFidelizados.map((fidelizado, index) => (
-                                            <CardFidelizado
-                                                key={index}
-                                                fotoUser={fidelizado.fotoUrl}
-                                                nomeUser={fidelizado.nome}
-                                                localidade={fidelizado.localidade}
-                                                notaGeral={fidelizado.notaGeral}
-                                                qtdViagensJuntos={fidelizado.qtdViagensJuntos}
+                                    {/* {
+                                        isMotorista
+                                            ? userData.passageirosFidelizados.map((fidelizado, index) => (
+                                                <CardFidelizado
+                                                    key={index}
+                                                    fotoUser={fidelizado.fotoUrl}
+                                                    nomeUser={fidelizado.nome}
+                                                    localidade={fidelizado.localidade}
+                                                    notaGeral={fidelizado.notaGeral}
+                                                    qtdViagensJuntos={fidelizado.qtdViagensJuntos}
+                                                />
+                                            ))
+                                            : <CardFidelizado
+                                                fotoUser={userData.motoristaFidelizado.fotoUrl}
+                                                nomeUser={userData.motoristaFidelizado.nome}
+                                                localidade={userData.motoristaFidelizado.localidade}
+                                                notaGeral={userData.motoristaFidelizado.notaGeral}
+                                                qtdViagensJuntos={userData.motoristaFidelizado.qtdViagensJuntos}
                                             />
-                                        ))
-                                    }
+                                    } */}
 
                                     {
-                                        (!hasMotoristaFidelizado && !hasPassageirosFidelizados) && perfilUser === "PASSAGEIRO"
-                                            ? <p>Sem motorista fidelizado por enquanto</p>
-                                            : <p>Sem passageiro(s) fidelizado(s) por enquanto</p>
+                                        messageSemFidelizado
                                     }
                                 </div>
                             </div>

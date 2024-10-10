@@ -3,8 +3,8 @@ import { inputSomenteNumero } from '../../../../utils/InputValidations'
 import { FaSearch } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
 import imgUser from '../../../../utils/assets/user-image.png'
-import { useEffect } from 'react';
-import { captializeWord } from '../../../../utils/functions';
+import { useEffect, useState } from 'react';
+import { captializeWord, isImageUrlValid } from '../../../../utils/functions';
 
 function EditForm({
     userData,
@@ -45,6 +45,14 @@ function EditForm({
             .open();
     };
 
+    const [isFotoValid, setIsFotoValid] = useState(false)
+
+    useEffect(() => {
+        isImageUrlValid(userData.fotoUrl).then(isValid => {
+            setIsFotoValid(isValid)
+        })
+    }, [userData.fotoUrl])
+
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             handleCepSearch()
@@ -55,7 +63,7 @@ function EditForm({
         <>
             <div className={styles["image-box"]}>
                 {
-                    userData.fotoUrl ?
+                    isFotoValid ?
                         (
                             <img src={userData.fotoUrl} alt={`Foto de ${userData.nome}`} />
                         ) : (

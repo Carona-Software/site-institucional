@@ -10,6 +10,7 @@ import api from "../../../Api";
 import loading from "../../../utils/assets/loading.gif";
 import { inputSomenteNumero } from "../../../utils/InputValidations";
 import { toast } from "react-toastify";
+import authentication from "../../../authentication";
 
 function OferecerCarona() {
 
@@ -319,4 +320,4 @@ function OferecerCarona() {
   );
 }
 
-export default OferecerCarona;
+export default authentication(OferecerCarona, 'MOTORISTA');

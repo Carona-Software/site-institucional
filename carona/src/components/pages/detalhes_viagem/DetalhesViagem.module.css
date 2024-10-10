@@ -156,7 +156,6 @@ body {
                     gap: 16px;
 
                     & img {
-                        background-color: #000;
                         border-radius: 50%;
                         height: 60px;
                         width: 60px;

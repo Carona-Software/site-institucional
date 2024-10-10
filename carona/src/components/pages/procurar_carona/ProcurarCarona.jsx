@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import imgUser from '../../../utils/assets/user-image.png'
 import api from '../../../Api';
 import { inputSomenteNumero } from '../../../utils/InputValidations';
+import authentication from '../../../authentication';
 
 
 function ProcurarCarona() {
@@ -215,4 +216,4 @@ function ProcurarCarona() {
     );
 }
 
-export default ProcurarCarona;
+export default authentication(ProcurarCarona, 'PASSAGEIRO');

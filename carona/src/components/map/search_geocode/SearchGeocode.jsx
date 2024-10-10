@@ -16,6 +16,8 @@ function SearchGeocode({ placeholder, className, name, startIcon, endIcon, onCli
             const promise = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${value}.json?access_token=${TOKEN}`)
 
             setPlaces(promise.data.features)
+
+            // console.log('promise.data.features: ', promise.data.features);
         } else {
             setPlaces([])
         }
