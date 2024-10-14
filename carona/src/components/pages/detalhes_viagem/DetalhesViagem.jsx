@@ -201,7 +201,7 @@ function DetalhesViagem() {
                                             <FaStar />
                                             <span>
                                                 {
-                                                    (viagemData.motorista.notaGeral != null || viagemData.motorista.notaGeral <= 0.0)
+                                                    (viagemData.motorista.notaGeral == null || viagemData.motorista.notaGeral <= 0.0)
                                                         ? "--"
                                                         : viagemData.motorista.notaGeral
                                                 }

@@ -42,13 +42,14 @@ function Dashboard() {
         },
         viagens: [],
         avaliacoes: [],
-        motoristaFidelizado: {
+        fidelizados: {
             id: null,
             nome: "",
             fotoUrl: "",
             notaGeral: null,
             qtdViagensJuntos: null,
-            localidade: "" // cidade + uf do endereço
+            ufLocalidade: "",
+            cidadeLocalidade: ""
         },
         principalTrajeto: {
             cidadePartida: "",
@@ -388,34 +389,25 @@ function Dashboard() {
                             <div className={styles["right"]}>
                                 {
                                     perfilUser === "PASSAGEIRO"
-                                        ? <h4>Motorista fidelizado</h4>
+                                        ? <h4>Motoristas fidelizados</h4>
                                         : <h4>Passageiros fidelizados</h4>
                                 }
 
                                 <div className={styles["fidelizado"]}>
-                                    {/* {
-                                        isMotorista
-                                            ? userData.passageirosFidelizados.map((fidelizado, index) => (
+                                    {
+                                        userData.fidelizados.length > 0
+                                            ? userData.fidelizados.map((fidelizado, index) => (
                                                 <CardFidelizado
                                                     key={index}
                                                     fotoUser={fidelizado.fotoUrl}
                                                     nomeUser={fidelizado.nome}
-                                                    localidade={fidelizado.localidade}
+                                                    cidade={fidelizado.cidadeLocalidade}
+                                                    uf={fidelizado.ufLocalidade}
                                                     notaGeral={fidelizado.notaGeral}
                                                     qtdViagensJuntos={fidelizado.qtdViagensJuntos}
                                                 />
                                             ))
-                                            : <CardFidelizado
-                                                fotoUser={userData.motoristaFidelizado.fotoUrl}
-                                                nomeUser={userData.motoristaFidelizado.nome}
-                                                localidade={userData.motoristaFidelizado.localidade}
-                                                notaGeral={userData.motoristaFidelizado.notaGeral}
-                                                qtdViagensJuntos={userData.motoristaFidelizado.qtdViagensJuntos}
-                                            />
-                                    } */}
-
-                                    {
-                                        messageSemFidelizado
+                                            : <p>{messageSemFidelizado}</p>
                                     }
                                 </div>
                             </div>

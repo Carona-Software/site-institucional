@@ -154,6 +154,7 @@ body {
                     align-items: center;
                     justify-content: start;
                     gap: 16px;
+                    z-index: 1;
 
                     & img {
                         border-radius: 50%;
