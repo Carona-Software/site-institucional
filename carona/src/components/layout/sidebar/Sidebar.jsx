@@ -25,9 +25,9 @@ function Sidebar({ currentPageName }) {
 
   const [isFotoValid, setIsFotoValid] = useState(false)
 
-    isImageUrlValid(fotoUser).then(isValid => {
-        setIsFotoValid(isValid)
-    })
+  isImageUrlValid(fotoUser).then(isValid => {
+    setIsFotoValid(isValid)
+  })
 
   function logout() {
     localStorage.clear();

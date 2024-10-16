@@ -11,9 +11,9 @@ import { FaClock } from "react-icons/fa6";
 import { useEffect, useState } from 'react';
 import { PiPersonFill } from "react-icons/pi";
 import CardAvaliacao from './card_avaliacao/CardAvaliacao';
-import CardFidelizado from './card_fidelizado/CardFidelizado';
 import api from '../../../Api';
 import { toast } from 'react-toastify';
+import SliderFidelizado from './slider_fidelizados/SliderFidelizado';
 
 function Dashboard() {
     const perfilUser = sessionStorage.getItem('perfilUser');
@@ -42,15 +42,7 @@ function Dashboard() {
         },
         viagens: [],
         avaliacoes: [],
-        fidelizados: {
-            id: null,
-            nome: "",
-            fotoUrl: "",
-            notaGeral: null,
-            qtdViagensJuntos: null,
-            ufLocalidade: "",
-            cidadeLocalidade: ""
-        },
+        fidelizados: [],
         principalTrajeto: {
             cidadePartida: "",
             ufPartida: "",
@@ -59,13 +51,15 @@ function Dashboard() {
         }
     })
 
+    const [fidelizados, setFidelizados] = useState([])
+
     const messageSemFidelizado = isMotorista ? "Sem passageiro(s) fidelizado(s) por enquanto" : "Sem motorista fidelizado por enquanto"
 
     const getUserInfo = async () => {
         try {
             const response = await api.get(`/usuarios/${idUser}`)
             setUserData(response.data)
-            console.log(response.data)
+            // console.log(response.data)
 
             sessionStorage.setItem('notaGeralUser', response.data.notaMedia)
             sessionStorage.setItem('fotoUser', response.data.fotoUrl)
@@ -80,6 +74,16 @@ function Dashboard() {
     useEffect(() => {
         getUserInfo();
     }, []);
+
+    const atualizarFidelizados = () => {
+        if (userData.fidelizados.length > 0) {
+            setFidelizados(userData.fidelizados)
+        }
+    }
+
+    useEffect(() => {
+        atualizarFidelizados()
+    }, [userData.fidelizados]);
 
     const [showNotaComunicacao, setShowNotaComunicacao] = useState(false)
     const [showNotaPontualidade, setShowNotaPontualidade] = useState(false)
@@ -389,25 +393,23 @@ function Dashboard() {
                             <div className={styles["right"]}>
                                 {
                                     perfilUser === "PASSAGEIRO"
-                                        ? <h4>Motoristas fidelizados</h4>
-                                        : <h4>Passageiros fidelizados</h4>
+                                        ? <h4>Motorista(s) fidelizado(s)</h4>
+                                        : <h4>Passageiro(s) fidelizado(s)</h4>
                                 }
 
                                 <div className={styles["fidelizado"]}>
                                     {
-                                        userData.fidelizados.length > 0
-                                            ? userData.fidelizados.map((fidelizado, index) => (
-                                                <CardFidelizado
-                                                    key={index}
-                                                    fotoUser={fidelizado.fotoUrl}
-                                                    nomeUser={fidelizado.nome}
-                                                    cidade={fidelizado.cidadeLocalidade}
-                                                    uf={fidelizado.ufLocalidade}
-                                                    notaGeral={fidelizado.notaGeral}
-                                                    qtdViagensJuntos={fidelizado.qtdViagensJuntos}
-                                                />
-                                            ))
-                                            : <p>{messageSemFidelizado}</p>
+                                        fidelizados.length > 0
+                                            ?
+                                            <div className={styles["com-fidelizados"]}>
+                                                <SliderFidelizado
+                                                fidelizados={fidelizados}
+                                            />
+                                            </div>
+                                            :
+                                            <div className={styles["sem-fidelizados"]}>
+                                                <p>{messageSemFidelizado}</p>
+                                            </div>
                                     }
                                 </div>
                             </div>

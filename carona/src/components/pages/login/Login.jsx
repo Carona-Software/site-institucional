@@ -36,10 +36,10 @@ function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    api.post('/usuarios/login', null, { params: user })
+    api.post('/usuarios/login', user)
       .then((response) => {
         console.log('Login realizado com sucesso:', response.data);
-        sessionStorage.setItem('idUser', response.data.id)
+        sessionStorage.setItem('idUser', Number(response.data.id))
         sessionStorage.setItem('generoUser', response.data.genero)
         sessionStorage.setItem('perfilUser', response.data.perfil)
         sessionStorage.setItem('nomeUser', response.data.nome)
@@ -51,10 +51,11 @@ function Login() {
       .catch(error => {
         if (error.response && error.response.status === 401) {
           console.log('Erro ao realizar login: Credenciais inválidas.');
+          toast.error('Email e senha inválidos')
         } else {
           console.log('Erro ao realizar login:', error);
+          toast.error("Houve um erro ao realizar o login")
         }
-        toast.error("Houve um erro ao realizar o login")
       })
       .finally(() => setIsLoading(false));
   }

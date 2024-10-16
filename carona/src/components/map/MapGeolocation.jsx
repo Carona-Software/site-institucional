@@ -48,7 +48,6 @@ function MapGeolocation({ latitudePartida, longitudePartida, latitudeDestino, lo
             const response = await apiMap.get(`https://api.mapbox.com/directions/v5/mapbox/driving/${longitudePartida},${latitudePartida};${longitudeDestino},${latitudeDestino}?steps=false&geometries=geojson&language=pt&access_token=${TOKEN}`)
 
             const data = response.data.routes[0]
-            console.log(data);
 
             setCoords(data.geometry.coordinates)
             handleDistancia(data.distance)

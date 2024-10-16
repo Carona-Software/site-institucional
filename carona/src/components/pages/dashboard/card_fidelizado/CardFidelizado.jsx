@@ -31,7 +31,7 @@ function CardAvaliacao({
                     <h5>{nomeUser}</h5>
                     <div className={styles["nota"]}>
                         <FaStar />
-                        <span>{notaGeral}</span>
+                        <span>{notaGeral == null || notaGeral <= 0.0 ? "--" : notaGeral}</span>
                     </div>
                 </div>
             </div>

@@ -34,7 +34,7 @@ body {
             justify-content: center;
             gap: 15px;
             color: #173e6d;
-            padding: 0 5px;
+            padding: 0 8px;
             box-sizing: border-box;
 
             & .arrow {
@@ -68,7 +68,7 @@ body {
             }
 
             & .box-input-date {
-                width: 15%;
+                width: 16%;
                 height: 36px;
                 font-size: 20px;
                 display: flex;
@@ -78,7 +78,7 @@ body {
                 gap: 15px;
 
                 & svg {
-                    font-size: 16px;
+                    font-size: 20px;
                 }
 
                 & input {
@@ -124,7 +124,8 @@ body {
             height: 60px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: start;
+            gap: 32px;
 
             & .box-filtro {
                 height: 100%;
@@ -133,6 +134,7 @@ body {
                 align-items: start;
                 justify-content: center;
                 gap: 8px;
+                box-sizing: border-box;
 
                 & span {
                     font-weight: 600;
@@ -141,7 +143,7 @@ body {
                 }
 
                 & .box-select {
-                    width: 100%;
+                    /* width: 100%; */
                     height: 100%;
                     border: none;
                     border-radius: 10px;
@@ -152,6 +154,7 @@ body {
                     text-align: center;
                     color: #173e6d;
                     font-weight: 600;
+                    box-sizing: border-box;
 
                     & option {
                         color: #173e6d;
@@ -174,8 +177,8 @@ body {
                     justify-content: start;
 
                     & input {
-                        width: 28px;
-                        height: 28px;
+                        width: 24px;
+                        height: 24px;
                         appearance: none;
                         margin: 0;
                         border-radius: 50%;
@@ -197,10 +200,10 @@ body {
 
                 & .input-div-preco {
                     background-color: #fff;
-                    border-radius: 7px;
-                    position: relative;
+                    border-radius: 10px;
+                    /* position: relative; */
                     height: 100%;
-                    width: 100%;
+                    width: 120px;
                     padding: 8px;
                     box-shadow: rgba(50, 50, 93, 0.169) 0px 13px 27px -5px, rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
                     display: flex;
@@ -216,7 +219,7 @@ body {
                     }
 
                     & input {
-                        width: 90%;
+                        width: 100%;
                         font-size: 16px;
                         font-weight: 400;
                         border: none;
@@ -229,6 +232,63 @@ body {
                     }
 
                 }
+
+                & .input-qtd-passageiro {
+                    background-color: #fff;
+                    border-radius: 10px;
+                    box-shadow: rgba(50, 50, 93, 0.169) 0px 13px 27px -5px, rgba(0, 0, 0, 0.123) 0px 8px 16px -8px;
+                    height: 100%;
+                    /* width: 60%; */
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    color: #173e6d;
+                    box-sizing: border-box;
+
+                    & button {
+                        border: none;
+                        background-color: #fff;
+                        height: 100%;
+                        width: 50px;
+                        margin: 0;
+                        border-radius: 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #173e6d;
+                        font-size: 20px;
+                    }
+
+                    & button:hover {
+                        background-color: #f5f5f5;
+                        cursor: pointer;
+                        margin: 0;
+                    }
+
+                    & .button-diminuir {
+                        border-top-left-radius: 7px;
+                        border-bottom-left-radius: 7px;
+                        border-right: 1px solid #ededed;
+                    }
+
+                    & .button-aumentar {
+                        border-top-right-radius: 7px;
+                        border-bottom-right-radius: 7px;
+                        border-left: 1px solid #ededed;
+                    }
+
+                    & input {
+                        height: 100%;
+                        width: 42px;
+                        border: none;
+                        display: flex;
+                        text-align: center;
+                        background-color: #fff;
+                        font-size: 16px;
+                        color: #173e6d;
+                        padding: 0;
+                    }
+                }
             }
         }
 
@@ -239,7 +299,7 @@ body {
             justify-content: space-between;
             flex-wrap: wrap;
             overflow-y: auto;
-            margin-top: 20px;
+            margin-top: 28px;
             overflow-y: auto;
         }
 

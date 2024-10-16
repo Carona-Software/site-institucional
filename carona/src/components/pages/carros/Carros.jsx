@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import ModalCarro from "./modal_carro/ModalCarro";
 import api from '../../../Api'
 import imgSemCarros from '../../../utils/assets/image-not-found-viagem.svg'
-import authentication from "../../../authentication";
+import withAuthentication from "../../../authentication";
 
 const Carros = () => {
   const idUser = sessionStorage.getItem('idUser')
@@ -252,7 +252,11 @@ const Carros = () => {
       })
       .catch(error => {
         console.log('Erro ao cadastrar carro: ', error);
-        toast.warning('Não foi possível cadastrar o carro')
+        if (error.response.data.status === 409) {
+          toast.error('Esta placa já está cadastrada em nosso sistema')
+        } else {
+          toast.error('Não foi possível cadastrar o carro')
+        }
       })
   }
 
@@ -348,4 +352,4 @@ const Carros = () => {
   );
 };
 
-export default authentication(Carros, 'MOTORISTA');
+export default withAuthentication(Carros, 'MOTORISTA');

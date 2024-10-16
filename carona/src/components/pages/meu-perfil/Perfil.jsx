@@ -63,6 +63,7 @@ function Perfil() {
     try {
       const response = await api.get(`/usuarios/${idUser}`)
       setUserData(response.data)
+      console.log('userData: ', response.data);
 
       sessionStorage.setItem('notaGeralUser', response.data.notaMedia)
       sessionStorage.setItem('fotoUser', response.data.fotoUrl)
@@ -164,6 +165,8 @@ function Perfil() {
   }
 
   const handleSaveChanges = async () => {
+    console.log('userEditData: ', userEditData);
+    
     try {
       const response = await api.put(`/usuarios/${idUser}`, userEditData)
       setUserData(response.data)

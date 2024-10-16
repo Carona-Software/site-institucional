@@ -6,14 +6,15 @@ import InfoUsers from '../../layout/info_users/InfoUsuarios'
 import InfoSistema from '../../layout/info_sistema/InfoSistema'
 import Footer from '../../layout/footer/Footer'
 import Navbar from '../../layout/navbar/Navbar'
-import { FaDotCircle } from 'react-icons/fa'
 import SearchGeocode from '../../map/search_geocode/SearchGeocode'
-import { FaArrowRightLong, FaCalendarDays } from 'react-icons/fa6'
-import { LuCircleDashed } from 'react-icons/lu'
+import { FaArrowRightLong } from 'react-icons/fa6'
+import { FaCalendarAlt } from "react-icons/fa";
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import api from '../../../Api'
 import imgUser from '../../../utils/assets/user-image.png'
+import { IoLocationSharp } from "react-icons/io5";
+import { MdMyLocation } from "react-icons/md";
 
 
 function Home() {
@@ -67,7 +68,7 @@ function Home() {
             <div className={styles["search-bar"]}>
                 <SearchGeocode
                     placeholder='Partida'
-                    startIcon={<LuCircleDashed />}
+                    startIcon={<MdMyLocation />}
                     name='cidadeOrigem'
                     className={styles["box-input"]}
                     onClickEvent={(place) => setViagemAPesquisar({
@@ -81,18 +82,18 @@ function Home() {
 
                 <SearchGeocode
                     placeholder='Chegada'
-                    startIcon={<FaDotCircle />}
+                    startIcon={<IoLocationSharp />}
                     name='cidadeDestino'
                     className={styles["box-input"]}
                     onClickEvent={(place) => setViagemAPesquisar({
                         ...viagemAPesquisar,
-                        latitudeDestino: place.geometry.coordinates[1], // Correção de coordenadas
-                        longitudeDestino: place.geometry.coordinates[0] // Correção de coordenadas
+                        latitudeDestino: place.geometry.coordinates[1], 
+                        longitudeDestino: place.geometry.coordinates[0] 
                     })}
                 />
 
                 <div className={styles["box-input-date"]}>
-                    <FaCalendarDays />
+                    <FaCalendarAlt />
                     <input type="date" name="diaViagem" className={styles["inputDate"]} id="dateId" onChange={(e) => setViagemAPesquisar({
                         ...viagemAPesquisar,
                         diaViagem: e.target.value

@@ -2,10 +2,23 @@ import { useState } from 'react';
 import styles from './CardViagem.module.css';
 import { FaCar, FaStar } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
+import { formatTime, isImageUrlValid } from '../../../../utils/functions';
+import defaultImgUser from '../../../../utils/assets/user-image.png'
 
-function CardViagem({ fotoUser, nomeUser, notaUser, horarioPartida, horarioChegada, preco, distanciaPartida, distanciaDestino, onClickEvent }) {
+function CardViagem({
+    viagemData,
+    distanciaPartida,
+    distanciaDestino,
+    onClickEvent
+}) {
     const [chegadaIsFocused, setChegadaIsFocused] = useState(false);
     const [destinoIsFocused, setDestinoIsFocused] = useState(false);
+
+    const [isFotoValid, setIsFotoValid] = useState(false)
+
+    isImageUrlValid(viagemData.motorista.fotoUrl).then(isValid => {
+        setIsFotoValid(isValid)
+    })
 
     const getCarColor = (distance) => {
         if (distance <= 3) {
@@ -23,12 +36,12 @@ function CardViagem({ fotoUser, nomeUser, notaUser, horarioPartida, horarioChega
     return (
         <div className={styles["card"]}>
             <div className={styles["infos-motorista"]}>
-                <img src={fotoUser} alt={"Foto de " + nomeUser} />
+                <img src={isFotoValid ? viagemData.motorista.fotoUrl : defaultImgUser} alt={viagemData.motorista.nome} />
                 <div className={styles["nome-nota"]}>
-                    <h4>{nomeUser}</h4>
+                    <h4>{viagemData.motorista.nome}</h4>
                     <div className={styles["nota-user"]}>
                         <FaStar />
-                        <span>{notaUser}</span>
+                        <span>{viagemData.motorista.notaGeral}</span>
                     </div>
                 </div>
             </div>
@@ -40,14 +53,14 @@ function CardViagem({ fotoUser, nomeUser, notaUser, horarioPartida, horarioChega
                     <div className={styles["horarios"]}>
                         <div className={styles["horario"]}>
                             <FaLocationDot />
-                            <span>{horarioPartida}h</span>
+                            <span>{formatTime(viagemData.horarioSaida)}</span>
                         </div>
 
                         <div className={styles["dashed-line"]}></div>
 
                         <div className={styles["horario"]}>
                             <FaLocationDot />
-                            <span>{horarioChegada}h</span>
+                            <span>{formatTime(viagemData.horarioChegada)}</span>
                         </div>
                     </div>
 
@@ -65,7 +78,9 @@ function CardViagem({ fotoUser, nomeUser, notaUser, horarioPartida, horarioChega
                                     <h4>Ponto de Partida</h4>
                                     <div className={styles["carro"]}>
                                         <FaCar className={styles[carColorPartida]} />
-                                        <span>{carColorPartida.charAt(0).toUpperCase() + carColorPartida.slice(1)}</span>
+                                        <span>
+                                            {carColorPartida.charAt(0).toUpperCase() + carColorPartida.slice(1)}
+                                        </span>
                                     </div>
                                     <p><span>{distanciaPartida} km</span> de distância</p>
                                 </div>
@@ -88,7 +103,9 @@ function CardViagem({ fotoUser, nomeUser, notaUser, horarioPartida, horarioChega
                                     <h4>Ponto de Destino</h4>
                                     <div className={styles["carro"]}>
                                         <FaCar className={styles[carColorDestino]} />
-                                        <span>{carColorDestino.charAt(0).toUpperCase() + carColorDestino.slice(1)}</span>
+                                        <span>
+                                            {carColorDestino.charAt(0).toUpperCase() + carColorDestino.slice(1)}
+                                        </span>
                                     </div>
                                     <p><span>{distanciaDestino} km</span> de distância</p>
                                 </div>
@@ -102,11 +119,9 @@ function CardViagem({ fotoUser, nomeUser, notaUser, horarioPartida, horarioChega
                 </div>
 
                 <div className={styles["preco-action-button"]}>
-                    <span>R$ <span>{preco}</span></span>
+                    <span>R$ <span>{viagemData.preco}</span></span>
 
-                    <button
-                        onClick={onClickEvent}
-                    >
+                    <button onClick={onClickEvent} >
                         Reservar
                     </button>
                 </div>

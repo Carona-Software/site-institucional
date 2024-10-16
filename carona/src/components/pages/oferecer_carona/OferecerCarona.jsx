@@ -10,7 +10,7 @@ import api from "../../../Api";
 import loading from "../../../utils/assets/loading.gif";
 import { inputSomenteNumero } from "../../../utils/InputValidations";
 import { toast } from "react-toastify";
-import authentication from "../../../authentication";
+import withAuthentication from "../../../authentication";
 
 function OferecerCarona() {
 
@@ -21,21 +21,7 @@ function OferecerCarona() {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
-
   const [carrosUser, setCarrosUser] = useState([]);
-
-  const getCarrosUser = async () => {
-    await api.get(`/carros/usuario/${idUser}`)
-      .then((res) => {
-        console.log(res.data);
-        setCarrosUser(res.data)
-      })
-      .catch(error => console.log('Erro ao buscar carros do usuário: ', error))
-  }
-
-  useEffect(() => {
-    getCarrosUser();
-  }, []);
 
   const formatDateForInput = (date) => {
     const year = date.getFullYear();
@@ -45,11 +31,38 @@ function OferecerCarona() {
     return `${year}-${month}-${day}`;
   }
 
-  // dataHora pré formatação para post
-  const [dataHora, setDataHora] = useState({
+  const [viagem, setViagem] = useState({
+    motoristaId: idUser,
+    pontoPartida: {
+      latitude: "",
+      longitude: ""
+    },
+    pontoDestino: {
+      latitude: "",
+      longitude: ""
+    },
     data: formatDateForInput(new Date()),
     hora: "",
+    carroId: '',
+    preco: "",
+    capacidadePassageiros: 1,
+    apenasMulheres: false,
   });
+
+  const getCarrosUser = async () => {
+    await api.get(`/carros/usuario/${idUser}`)
+      .then((res) => {
+        setCarrosUser(res.data)
+        if (res.data.length > 0) {
+          setViagem({...viagem, carroId: res.data[0].id})
+        }
+      })
+      .catch(error => console.log('Erro ao buscar carros do usuário: ', error))
+  }
+
+  useEffect(() => {
+    getCarrosUser();
+  }, []);
 
   // gerar horarios para combo box a partir da hora atual
   function gerarHorarioComboBox() {
@@ -58,16 +71,17 @@ function OferecerCarona() {
     let horaAtual = new Date().getHours();
     let minutoAtual = new Date().getMinutes();
     let hoje = new Date();
-    console.log('hoje: ', hoje);
-    let dataEscolhida = new Date(dataHora.data)
-    console.log('dataEscolhida: ', dataEscolhida);
+
+    const fullDateString = `${viagem.data}T00:00:00`;
+    let dataEscolhida = new Date(fullDateString)
 
     hoje.setHours(0, 0, 0, 0);
     dataEscolhida.setHours(0, 0, 0, 0);
 
     let dataSelecionadaIsFuture = dataEscolhida > hoje
-
+    
     for (let hour = dataSelecionadaIsFuture ? 0 : horaAtual; hour <= 23; hour++) {
+
       if (hour > horaAtual) {
         timestamps.push(formatHour(hour, 0));
         timestamps.push(formatHour(hour, 30));
@@ -79,8 +93,13 @@ function OferecerCarona() {
       }
     }
 
+    if (dataSelecionadaIsFuture) {
+      timestamps.unshift(formatHour(0, 0));
+    }
+
     timestamps.unshift('Selecione o horário')
-    return timestamps;
+    setHorariosComboBox(timestamps)
+    // return timestamps;
   }
 
   const formatHour = (hour, minute) => {
@@ -91,51 +110,35 @@ function OferecerCarona() {
     });
   };
 
-  const [horariosComboBox, setHorariosComboBox] = useState(gerarHorarioComboBox());
+  const [horariosComboBox, setHorariosComboBox] = useState([]);
 
   const handleDataChange = (e) => {
-    
-    console.log('nova data: ', e.target.value);
-    
-    setDataHora({ ...dataHora, data: e.target.value })
-    const horarios = gerarHorarioComboBox()
-    setHorariosComboBox(horarios)
-    console.log('horariosComboBox: ', horarios);
+    setViagem({ ...viagem, data: e.target.value })
   }
-
-  const [viagem, setViagem] = useState({
-    idMotorista: idUser,
-    latitudePartida: "",
-    longitudePartida: "",
-    latitudeDestino: "",
-    longitudeDestino: "",
-    horario: "",
-    idCarro: '',
-    valor: "",
-    qntPassageiros: 1,
-    soMulheres: false,
-  });
+  
+  useEffect(() => {
+    gerarHorarioComboBox()
+  }, [viagem.data])
 
   const handleViagemSave = async () => {
+    console.log("viagem: ", viagem);
+
     if (
-      !viagem.latitudePartida ||
-      !viagem.longitudePartida ||
-      !viagem.latitudeDestino ||
-      !viagem.longitudeDestino ||
-      !dataHora.data ||
-      !dataHora.hora ||
-      !viagem.valor
+      !viagem.pontoPartida.latitude ||
+      !viagem.pontoPartida.longitude ||
+      !viagem.pontoDestino.latitude ||
+      !viagem.pontoDestino.longitude ||
+      !viagem.data ||
+      !viagem.hora ||
+      !viagem.preco ||
+      !viagem.carroId
     ) {
       toast.error("Preencha todos os campos!");
     } else {
       try {
         // let response = await api.post('/cadastrar', viagem)
         // console.log(response);
-        setViagem({
-          ...viagem,
-          horario: `${dataHora.data}T${dataHora.hora}:00`,
-        });
-        console.log(viagem);
+        // console.log("viagem: ", viagem);
         toast.success("Viagem cadastrada com sucesso!");
       } catch (error) {
         toast.error("Erro ao cadastrar a viagem.");
@@ -167,8 +170,10 @@ function OferecerCarona() {
                     className={styles["input-div"]}
                     onClickEvent={(place) => setViagem({
                       ...viagem,
-                      latitudePartida: place.geometry.coordinates[1],
-                      longitudePartida: place.geometry.coordinates[0]
+                      pontoPartida: {
+                        latitude: place.geometry.coordinates[1],
+                        longitude: place.geometry.coordinates[0]
+                      }
                     })}
                   />
 
@@ -184,8 +189,10 @@ function OferecerCarona() {
                     className={styles["input-div"]}
                     onClickEvent={(place) => setViagem({
                       ...viagem,
-                      latitudeDestino: place.geometry.coordinates[1],
-                      longitudeDestino: place.geometry.coordinates[0]
+                      pontoDestino: {
+                        latitude: place.geometry.coordinates[1],
+                        longitude: place.geometry.coordinates[0]
+                      }
                     })}
                   />
                 </div>
@@ -195,21 +202,19 @@ function OferecerCarona() {
                   <div className={styles["input-div"]}>
                     <input
                       type="date"
-                      name="data"
                       onChange={handleDataChange}
-                      value={dataHora.data} />
+                      value={viagem.data} />
                   </div>
                 </div>
 
                 <div className={styles["box-select"]} name="hora">
                   <h4>Horário de Partida</h4>
-                  <select onClick={(e) => setDataHora({ ...dataHora, hora: e.target.value })}>
+                  <select onClick={(e) => setViagem({ ...viagem, hora: e.target.value })}>
                     {
                       horariosComboBox.map((horario, index) => (
                         <option
                           key={index}
                           value={horario}
-                        // onClick={handleHoraClick}
                         >
                           {horario}{horario !== 'Selecione o horário' && 'h'}
                         </option>
@@ -220,14 +225,13 @@ function OferecerCarona() {
 
                 <div className={styles["box-select"]}>
                   <h4>Carro</h4>
-                  <select>
+                  <select onClick={(e) => setViagem({ ...viagem, carroId: Number(e.target.value) })}>
                     {
                       carrosUser.length > 0 ?
                         carrosUser.map(carro => (
                           <option
                             key={carro.id}
                             value={carro.id}
-                            onClick={() => setViagem({ ...viagem, idCarro: carro.id })}
                           >
                             {carro.marca} {carro.modelo}
                           </option>
@@ -246,7 +250,7 @@ function OferecerCarona() {
                       type="text"
                       name="preco"
                       placeholder="00,00"
-                      onChange={(e) => setViagem({ ...viagem, valor: e.target.value })}
+                      onChange={(e) => setViagem({ ...viagem, preco: e.target.value })}
                       onInput={inputSomenteNumero}
                     />
                   </div>
@@ -255,13 +259,13 @@ function OferecerCarona() {
                 <div className={styles["box-input"]} style={{ width: "44%" }}>
                   <h4>Passageiros</h4>
                   <div className={styles["input-qtd-passageiro"]}>
-                    <button className={styles["button-diminuir"]} onClick={() => setViagem({ ...viagem, qntPassageiros: viagem.qntPassageiros > 1 ? viagem.qntPassageiros - 1 : viagem.qntPassageiros })} >
+                    <button className={styles["button-diminuir"]} onClick={() => setViagem({ ...viagem, capacidadePassageiros: viagem.capacidadePassageiros > 1 ? viagem.capacidadePassageiros - 1 : viagem.capacidadePassageiros })} >
                       <AiOutlineMinus />
                     </button>
 
-                    <input disabled value={viagem.qntPassageiros} />
+                    <input disabled value={viagem.capacidadePassageiros} />
 
-                    <button className={styles["button-aumentar"]} onClick={() => setViagem({ ...viagem, qntPassageiros: viagem.qntPassageiros < 4 ? viagem.qntPassageiros + 1 : viagem.qntPassageiros })} >
+                    <button className={styles["button-aumentar"]} onClick={() => setViagem({ ...viagem, capacidadePassageiros: viagem.capacidadePassageiros < 4 ? viagem.capacidadePassageiros + 1 : viagem.capacidadePassageiros })} >
                       <AiOutlinePlus />
                     </button>
                   </div>
@@ -306,10 +310,10 @@ function OferecerCarona() {
 
             <div className={styles["box-mapa"]}>
               <MapGeolocation
-                latitudePartida={viagem.latitudePartida}
-                longitudePartida={viagem.longitudePartida}
-                latitudeDestino={viagem.latitudeDestino}
-                longitudeDestino={viagem.longitudeDestino}
+                latitudePartida={viagem.pontoPartida.latitude}
+                longitudePartida={viagem.pontoPartida.longitude}
+                latitudeDestino={viagem.pontoDestino.latitude}
+                longitudeDestino={viagem.pontoDestino.longitude}
               />
             </div>
 
@@ -320,4 +324,4 @@ function OferecerCarona() {
   );
 }
 
-export default authentication(OferecerCarona, 'MOTORISTA');
+export default withAuthentication(OferecerCarona, 'MOTORISTA');
