@@ -28,7 +28,7 @@ function Cadastro() {
     numero: "",
     senha: "",
     confirmacaoSenha: "",
-    imageUrl: ""
+    fotoUrl: ""
   });
 
   const [enderecoData, setEnderecoData] = useState({
@@ -212,7 +212,7 @@ function Cadastro() {
   }
 
   function validarFoto() {
-    return pessoalData.imageUrl !== ''
+    return pessoalData.fotoUrl !== ''
   }
 
   function setCurrentComponentAndProgressWidth(currentComponent, widthProgressBar) {
@@ -254,7 +254,7 @@ function Cadastro() {
       dataNascimento: pessoalData.dataNascimento,
       genero: pessoalData.sexo,
       perfil: pessoalData.perfil.toUpperCase(),
-      urlFoto: pessoalData.imageUrl,
+      fotoUrl: pessoalData.fotoUrl,
       endereco: {
         cep: enderecoData.cep,
         logradouro: enderecoData.logradouro,
@@ -264,6 +264,8 @@ function Cadastro() {
         numero: pessoalData.numero,
       },
     };
+
+    console.log('usuarioCriacaoDto: ', usuarioCriacaoDto);
 
     setIsLoading(true)
 

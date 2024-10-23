@@ -64,8 +64,7 @@ function CadastroUser({ handleUserEvent, userPessoalData }) {
           if (result && result.event === "success") {
             const imageUrl = result.info.secure_url;
             console.log("URL da imagem salva:", imageUrl);
-            handleUserEvent({ target: { name: "imageUrl", value: imageUrl } });
-            // localStorage.setItem("userProfileImage", imageUrl);
+            handleUserEvent({ target: { name: "fotoUrl", value: imageUrl } });
           } else if (error) {
             console.error("Erro ao fazer upload:", error);
           }
@@ -111,10 +110,10 @@ function CadastroUser({ handleUserEvent, userPessoalData }) {
           <div className={styles["image-box"]}>
             <div className={styles["circle-input"]}>
               <input type="file" id="file" style={{ display: "none" }} />
-              {userPessoalData.imageUrl ? (
+              {userPessoalData.fotoUrl ? (
                 <div className={styles["circle-profile-image"]}>
                   <img
-                    src={userPessoalData.imageUrl}
+                    src={userPessoalData.fotoUrl}
                     alt="User profile"
                     className={styles["profile-image"]}
                   />
