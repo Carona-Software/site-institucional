@@ -54,7 +54,7 @@ function CadastroUser({ handleUserEvent, userPessoalData }) {
     window.cloudinary
       .openUploadWidget(
         {
-          cloudName: "dkzjrifqn",
+          cloudName: "carona",
           uploadPreset: "profile_pictures",
           sources: ["local", "url", "camera"],
           multiple: false,
